@@ -1,0 +1,40 @@
+<div class="container-fluid text-light bg-dark">
+  <div class="d-flex align-items-center justify-content-center auth flex-wrap">
+    <form class="row col-12" [formGroup]="authForm" #messageFormDirective="ngForm">
+      <div class="mb-3 col-sm-6 offset-sm-3">
+        <h2 class="text-center">Signup</h2>
+        <p class="text-center"><a [routerLink]="'/auth/signin'">or signin</a></p>
+      </div>
+
+      <div class="mb-3 col-sm-6 offset-sm-3">
+        <label for="login" class="form-label">Login</label>
+        <input type="text" class="form-control" id="login" placeholder="Input login here" formControlName="login">
+      </div>
+      <div class="mb-3 col-sm-6 offset-sm-3">
+        <label for="password" class="form-label">Password</label>
+        <div class="input-group">
+          <div class="input-group-text" (click)="switchPasswordVisibility()">
+            <i *ngIf="!showPassword" class="bi bi-eye"></i>
+            <i *ngIf="showPassword" class="bi bi-eye-slash"></i>
+          </div>
+          <input [type]="showPassword ? 'text': 'password'" class="form-control" id="password"
+            placeholder="Input password here" formControlName="password">
+        </div>
+      </div>
+
+      <div class="mb-3 col-sm-6 offset-sm-3">
+        <label for="passwordConfirm" class="form-label">Confirm password</label>
+        <div class="input-group">
+          <div class="input-group-text" (click)="switchPasswordVisibility()">
+            <i *ngIf="!showPassword" class="bi bi-eye"></i>
+            <i *ngIf="showPassword" class="bi bi-eye-slash"></i>
+          </div>
+          <input [type]="showPassword ? 'text': 'password'" class="form-control" id="passwordConfirm"
+            placeholder="Confirm password" formControlName="passwordConfirm">
+        </div>
+      </div>
+      <button type="button" [disabled]="!authForm.valid" class="btn btn-primary my-3 col-sm-4 offset-sm-4"
+        (click)="signupHandler()">Signup</button>
+    </form>
+  </div>
+</div>

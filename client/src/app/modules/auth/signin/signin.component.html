@@ -1,0 +1,22 @@
+<div class="container-fluid text-light bg-dark">
+  <div class="d-flex align-items-center justify-content-center auth flex-wrap">
+    <form class="row col-12" [formGroup]="authForm" #messageFormDirective="ngForm">
+      <div class="mb-3 col-sm-6 offset-sm-3">
+        <h2 class="text-center">Signin</h2>
+        <p class="text-center"><a [routerLink]="'/auth/signup'">or signup</a></p>
+      </div>
+
+      <div class="mb-3 col-sm-6 offset-sm-3">
+        <label for="login" class="form-label">Login</label>
+        <input type="text" class="form-control" id="login" placeholder="Input login here" formControlName="login">
+      </div>
+      <div class="mb-3 col-sm-6 offset-sm-3">
+        <label for="password" class="form-label">Password</label>
+        <input type="password" class="form-control" id="password" placeholder="Input password here"
+          formControlName="password">
+      </div>
+      <button type="button" [disabled]="!authForm.valid" class="btn btn-primary my-3 col-sm-4 offset-sm-4"
+        (click)="loginHandler()">Login</button>
+    </form>
+  </div>
+</div>
