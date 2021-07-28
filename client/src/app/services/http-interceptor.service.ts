@@ -41,6 +41,7 @@ export class HttpInterceptorService implements HttpInterceptor {
       ));
 
   }
+  
   private modifyBody(body: any) {
     /*
     * write your logic to modify the body

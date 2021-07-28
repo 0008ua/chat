@@ -1,6 +1,9 @@
 import { UserService } from './../../../services/user.service';
 import { Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
+import { Store } from '@ngrx/store';
+import { State } from 'src/app/store/reducers/user.reducer';
+import { Login } from 'src/app/store/actions/user.actions';
 
 @Component({
   selector: 'app-signin',
@@ -12,6 +15,7 @@ export class SigninComponent implements OnInit {
 
   constructor(
     private userService: UserService,
+    private store: Store<State>,
   ) { }
 
   ngOnInit(): void {
@@ -40,7 +44,6 @@ export class SigninComponent implements OnInit {
   }
 
   loginHandler() {
-    this.userService.login(this.authForm.value)
-      .subscribe((res) => console.log('res', res));
+    this.store.dispatch(new Login(this.authForm.value));
   }
 }

@@ -31,6 +31,9 @@ class ServerError extends CustomError {
 };
 
 const errorHandler = (err, req, res, next) => {
+  if (process.env.NODE_ENV === 'development') {
+    console.log('error handler', err);
+  }
   // defined errors return to client
   if (err instanceof (ClientError || ServerError)) {
     return res.status(err.status).json(err);

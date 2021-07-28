@@ -1,37 +1,33 @@
 module.exports = {
   'env': {
     'browser': true,
-    'commonjs': true,
     'es6': true,
-    'node': true,
   },
   'extends': [
+    'eslint:recommended',
+    'plugin:@typescript-eslint/eslint-recommended',
     'google',
   ],
   'globals': {
     'Atomics': 'readonly',
     'SharedArrayBuffer': 'readonly',
   },
+  'parser': '@typescript-eslint/parser',
   'parserOptions': {
     'ecmaVersion': 2019,
+    'sourceType': 'module',
   },
+  'plugins': [
+    'eslint-plugin-html',
+    '@typescript-eslint',
+  ],
   'rules': {
-    'linebreak-style': 0,
+    'max-len': [2, { 'code': 140 }],
     'object-curly-spacing': 0,
-    'require-jsdoc': 0,
-    'indent': [
-      'error',
-      2,
-    ],
     'new-cap': 0,
-    'max-len': [
-      2,
-      {
-        'code': 180,
-        'tabWidth': 2,
-        'ignoreUrls': true,
-      },
-    ],
+    'require-jsdoc': 0,
+    'no-invalid-this': 0,
     'camelcase': ['error', { allow: ['(.*?)_id(.*?)', '(.*?)_format(.*?)'] }],
+    'linebreak-style': 0,
   },
-};
+}

@@ -35,7 +35,7 @@ function log(module) {
       timestamp(),
       json(),
       label({ label: path }),
-      fileFormat
+      fileFormat,
     ),
   });
   const errorLogger = new File({
@@ -45,7 +45,7 @@ function log(module) {
       timestamp(),
       json(),
       label({ label: path }),
-      fileFormat
+      fileFormat,
     ),
   });
 

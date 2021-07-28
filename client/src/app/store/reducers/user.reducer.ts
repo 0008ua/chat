@@ -8,11 +8,13 @@ export const userFeatureKey = 'user';
 export interface State {
   user: User | null;
   loading: boolean;
+  redirectionUrl: string | null;
 }
 
 export const initialState: State = {
   user: null,
   loading: false,
+  redirectionUrl: null,
 };
 
 export function reducer(state = initialState, action: UserActions): State {
@@ -27,6 +29,9 @@ export function reducer(state = initialState, action: UserActions): State {
     case UserActionTypes.NotAuthenticated:
       return { ...state, user: initialState.user, loading: false };
 
+    case UserActionTypes.Redirection:
+      return { ...state, redirectionUrl: action.payload };
+
     default:
       return state;
   }
@@ -35,3 +40,4 @@ export function reducer(state = initialState, action: UserActions): State {
 const featureSelector = createFeatureSelector<State>(userFeatureKey);
 
 export const getUser = createSelector(featureSelector, (state) => state.user);
+export const redirectionUrl = createSelector(featureSelector, (state) => state.redirectionUrl);

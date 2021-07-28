@@ -3,7 +3,7 @@ import { CanLoad, Route, UrlSegment, ActivatedRouteSnapshot, RouterStateSnapshot
 import { Observable } from 'rxjs';
 
 import { Store } from '@ngrx/store';
-import { State } from '../../store/reducers';
+import { State } from '../store/reducers';
 
 import { map, take } from 'rxjs/operators';
 

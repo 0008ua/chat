@@ -1,6 +1,9 @@
+import { State } from './../../../store/reducers/index';
 import { UserService } from './../../../services/user.service';
 import { Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
+import { Store } from '@ngrx/store';
+import { Signup } from 'src/app/store/actions/user.actions';
 
 @Component({
   selector: 'app-signup',
@@ -13,6 +16,7 @@ export class SignupComponent implements OnInit {
 
   constructor(
     private userService: UserService,
+    private store: Store<State>,
   ) { }
 
   ngOnInit(): void {
@@ -52,10 +56,9 @@ export class SignupComponent implements OnInit {
     )
   }
 
-  signupHandler() {
+  signup() {
     const { login, password } = this.authForm.value;
-    this.userService.signup({ login, password })
-      .subscribe((res) => console.log('res', res));
+    this.store.dispatch(new Signup({ login, password }));
   }
 
   switchPasswordVisibility() {

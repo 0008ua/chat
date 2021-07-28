@@ -1,4 +1,4 @@
-import { User } from './../../interfaces';
+import { User, UserCandidate } from './../../interfaces';
 import { Action } from '@ngrx/store';
 
 
@@ -7,6 +7,10 @@ export enum UserActionTypes {
   Authenticated = '[User] Authenticated User',
   NotAuthenticated = '[User] NotAuthenticated User',
   AuthError = '[User] AuthError',
+  Redirection = '[User] Redirection',
+  Login = '[User] Login',
+  Signup = '[User] Signup',
+  Logout = '[User] Logout',
 }
 
 export class LoadUser implements Action {
@@ -27,8 +31,32 @@ export class AuthError implements Action {
   constructor(public payload: any) { }
 }
 
+export class Redirection implements Action {
+  readonly type = UserActionTypes.Redirection;
+  constructor(public payload: string | null ) { }
+}
+
+export class Login implements Action {
+  readonly type = UserActionTypes.Login;
+  constructor(public payload: UserCandidate) { }
+}
+
+export class Signup implements Action {
+  readonly type = UserActionTypes.Signup;
+  constructor(public payload: UserCandidate) { }
+}
+
+export class Logout implements Action {
+  readonly type = UserActionTypes.Logout;
+}
+
 export type UserActions
   = LoadUser
   | Authenticated
   | NotAuthenticated
-  | AuthError;
+  | AuthError
+  | Redirection
+  | Login
+  | Signup
+  | Logout;
+

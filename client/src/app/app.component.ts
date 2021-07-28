@@ -11,7 +11,7 @@ import { State } from './store/reducers';
 export class AppComponent implements OnInit {
   constructor(
     private store: Store<State>,
-  ) {}
+  ) { }
 
   ngOnInit() {
     this.store.dispatch(new LoadUser());
