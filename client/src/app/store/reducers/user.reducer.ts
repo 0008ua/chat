@@ -6,35 +6,34 @@ import { UserActions, UserActionTypes } from '../actions/user.actions';
 export const userFeatureKey = 'user';
 
 export interface State {
-  user: User | null;
-  loading: boolean;
-  redirectionUrl: string | null;
+    user: User | null;
+    loading: boolean;
+    redirectionUrl: string | null;
 }
 
 export const initialState: State = {
-  user: null,
-  loading: false,
-  redirectionUrl: null,
+    user: null,
+    loading: false,
+    redirectionUrl: null,
 };
 
 export function reducer(state = initialState, action: UserActions): State {
-  switch (action.type) {
+    switch (action.type) {
+        case UserActionTypes.LoadUser:
+            return { ...state, loading: true };
 
-    case UserActionTypes.LoadUser:
-      return { ...state, loading: true };
+        case UserActionTypes.Authenticated:
+            return { ...state, user: { ...action.payload }, loading: false };
 
-    case UserActionTypes.Authenticated:
-      return { ...state, user: { ...action.payload }, loading: false };
+        case UserActionTypes.NotAuthenticated:
+            return { ...state, user: initialState.user, loading: false };
 
-    case UserActionTypes.NotAuthenticated:
-      return { ...state, user: initialState.user, loading: false };
+        case UserActionTypes.Redirection:
+            return { ...state, redirectionUrl: action.payload };
 
-    case UserActionTypes.Redirection:
-      return { ...state, redirectionUrl: action.payload };
-
-    default:
-      return state;
-  }
+        default:
+            return state;
+    }
 }
 
 const featureSelector = createFeatureSelector<State>(userFeatureKey);

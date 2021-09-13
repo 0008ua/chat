@@ -5,21 +5,22 @@ import { StoreModule } from '@ngrx/store';
 import { reducers, metaReducers } from './reducers';
 import { EffectsModule } from '@ngrx/effects';
 import { UserEffects } from './effects/user.effects';
+import { SocketEffects } from './effects/socket.effects';
 
 
 @NgModule({
-  declarations: [],
-  imports: [
-    StoreModule.forRoot(reducers, {
-      metaReducers,
-      runtimeChecks: {
-        strictStateImmutability: true,
-        strictActionImmutability: true,
-      },
-    }),
-    StoreDevtoolsModule.instrument({ maxAge: 25, logOnly: environment.production }),
-    EffectsModule.forRoot([UserEffects])
-  ]
+    declarations: [],
+    imports: [
+        StoreModule.forRoot(reducers, {
+            metaReducers,
+            runtimeChecks: {
+                strictStateImmutability: true,
+                strictActionImmutability: true,
+            },
+        }),
+        StoreDevtoolsModule.instrument({ maxAge: 25, logOnly: environment.production }),
+        EffectsModule.forRoot([UserEffects, SocketEffects]),
+    ],
 })
 
 export class AppStoreModule { }

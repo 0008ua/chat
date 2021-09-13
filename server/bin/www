@@ -10,6 +10,7 @@ const https = require('https');
 const fs = require('fs');
 const path = require('path');
 
+
 /*
  * Get port from environment and store in Express.
  */
@@ -30,6 +31,10 @@ if (process.env.NODE_ENV === 'development') {
   server = http.createServer(app);
 }
 
+const { socket } = require('../config/socket');
+
+// io(server);
+socket.init(server);
 
 /*
  * Listen on provided port, on all network interfaces.

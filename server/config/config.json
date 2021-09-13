@@ -1,3 +1,18 @@
 {
-
+  "anonymousNamePrefix": "anonymous_",
+  "anonymousNameLimitter": "__",
+  "permissions": {
+    "admin": [
+      "admin",
+      "user",
+      "guest"
+    ],
+    "user": [
+      "user",
+      "guest"
+    ],
+    "guest": [
+      "guest"
+    ]
+  }
 }

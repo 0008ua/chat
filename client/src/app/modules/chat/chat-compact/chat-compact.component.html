@@ -1,0 +1,19 @@
+<div class="chat-compact text-light bg-dark">
+  <div #chatMessages class="chat-compact__messages text-dark bg-light">
+    <div class="messages">
+
+    </div>
+
+  </div>
+  <div class="chat-compact__compose compose">
+    <div class="compose__text compose__text_compact">
+      <input #inpMsg type="text" class="form-control form-control-sm" placeholder="message">
+    </div>
+    <div class="compose__send compose__send_compact">
+      <button class="btn btn-light btn-sm">
+        <i class="bi bi-arrow-right"></i>
+      </button>
+      <!-- <button class="btn btn-light" (click)="send()" [disabled]="!textValidation">Send</button> -->
+    </div>
+  </div>
+</div>

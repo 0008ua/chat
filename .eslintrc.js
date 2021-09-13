@@ -7,13 +7,18 @@ module.exports = {
   },
   'extends': [
     'google',
+    'eslint:recommended',
+    'plugin:import/errors',
+    'plugin:import/warnings',
   ],
   'globals': {
     'Atomics': 'readonly',
     'SharedArrayBuffer': 'readonly',
   },
+  'parser': '@babel/eslint-parser',
   'parserOptions': {
-    'ecmaVersion': 2019,
+    'es6': true,
+    'ecmaVersion': 6,
   },
   'rules': {
     'linebreak-style': 0,

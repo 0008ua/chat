@@ -1,6 +1,182 @@
 @import "./styles/bootstrap";
 @import "./styles/fonts-icons";
+@import "./styles/cssReset";
 
 .auth {
-  height: 100vh;
+  min-height: calc(100vh - #{$nav-height});
+}
+
+.chat-compact {
+  opacity: 0.9;
+  position: fixed;
+  right: 5px;
+  bottom: 5px;
+  height: 350px;
+  width: 200px;
+  border-radius: 0.5rem;
+  padding: 0.5rem;
+  &__messages {
+    height: calc(100% - #{$compose-compact-height});
+    flex: 0 1 100%;
+    overflow-y: auto;
+    border-radius: 0.5rem;
+    &::-webkit-scrollbar {
+      width: 0.5rem;
+      // background-color: #f5f5f5;
+      border-radius: 0.5rem;
+    }
+    &::-webkit-scrollbar-thumb {
+      border-radius: 0.5rem;
+      -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
+      box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
+      background-color: $gray-600;
+    }
+  }
+  &__compose {
+    padding-top: 0.5rem;
+    height: $compose-compact-height;
+    flex: 0 1 100%;
+  }
+}
+
+.chat-regular {
+  padding: 0.5rem;
+  height: calc(100vh - #{$nav-height});
+  display: flex;
+  flex-flow: row wrap;
+  margin: 0 2rem;
+  &__connect {
+    @include media-breakpoint-up(sm) {
+      min-width: 0;
+      height: calc(100% - #{$compose-height});
+      flex: 0 1 80%;
+      padding-right: 0.5rem;
+      margin: auto;
+    }
+  }
+  &__contacts {
+    @include media-breakpoint-up(sm) {
+      min-width: 0;
+      height: calc(100% - #{$compose-height});
+      flex: 0 1 20%;
+      padding-right: 0.5rem;
+      display: block;
+    }
+    display: none;
+  }
+  &__messages {
+    @include media-breakpoint-up(sm) {
+      min-width: 0;
+      flex: 0 1 80%;
+    }
+    height: calc(100% - #{$compose-height});
+    flex: 0 1 100%;
+    overflow-y: auto;
+    border-radius: 0.5rem;
+    &::-webkit-scrollbar {
+      width: 0.5rem;
+      // background-color: #f5f5f5;
+      border-radius: 0.5rem;
+    }
+    &::-webkit-scrollbar-thumb {
+      border-radius: 0.5rem;
+      -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
+      box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
+      background-color: $gray-600;
+    }
+  }
+  &__compose {
+    padding-top: 0.5rem;
+    height: $compose-height;
+    flex: 0 1 100%;
+  }
+}
+
+.connect {
+  border-radius: 0.5rem;
+  height: 100%;
+  padding: 1rem;
+  &__item {
+    margin: 0.5rem 0;
+    background-color: $gray-200;
+    border-radius: 0.5rem;
+    padding: 0.5rem;
+  }
+}
+
+.contacts {
+  border-radius: 0.5rem;
+  height: 100%;
+  padding: 1rem;
+  &__header {
+    margin: 0.5rem 0;
+    background-color: $gray-400;
+    border-radius: 0.5rem;
+    padding: 0.5rem;
+  }
+  &__item {
+    margin: 0.5rem 0;
+    background-color: $gray-200;
+    border-radius: 0.5rem;
+    padding: 0.5rem;
+    cursor: pointer;
+  }
+}
+
+.messages {
+  min-height: 100%;
+  // border-radius: 0.5rem;
+  display: flex;
+  align-content: flex-end;
+  flex-flow: row wrap;
+  padding: 1rem;
+  &__item {
+    flex: 0 0 70%;
+    max-width: 70%;
+    padding: 0.5rem;
+    margin: 0.5rem;
+    border-radius: 0.5rem;
+    &_in {
+      background-color: $gray-400;
+      margin-left: 0;
+      margin-right: auto;
+    }
+    &_out {
+      background-color: $gray-500;
+      margin-left: auto;
+      margin-right: 0;
+    }
+  }
+}
+
+.compose {
+  display: flex;
+  flex-flow: row nowrap;
+  align-items: center;
+  &__text {
+    flex: 1 1 auto;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    &_regular {
+    }
+    &_compact {
+      padding-right: 0.5rem;
+    }
+  }
+  &__send {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    &_regular {
+      flex: 0 0 100px;
+    }
+    &_compact {
+      flex: 0 0 24px;
+    }
+  }
+}
+
+.cursor-pointer {
+  cursor: pointer;
 }

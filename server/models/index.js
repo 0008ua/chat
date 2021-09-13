@@ -1,25 +1,9 @@
-const { mongoose } = require('../config/mongoose');
-const Schema = mongoose.Schema;
-
-const UserSchema = new Schema({
-  login: {
-    type: String,
-    required: true,
-    unique: true,
-  },
-  password: {
-    type: String,
-    required: true,
-  },
-  createdAt: {
-    type: Number,
-    default: () => Date.now(),
-  },
-});
-
-
-UserModel = mongoose.model('users', UserSchema);
+const { UserModel } = require('./userModel');
+const { MsgModel } = require('./msgModel');
+const { RoomModel } = require('./roomModel');
 
 module.exports = {
   UserModel,
+  RoomModel,
+  MsgModel,
 };

@@ -3,47 +3,65 @@ import { Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { Store } from '@ngrx/store';
 import { State } from 'src/app/store/reducers/user.reducer';
-import { Login } from 'src/app/store/actions/user.actions';
+import { Login, LoginAnonymous } from 'src/app/store/actions/user.actions';
 
 @Component({
-  selector: 'app-signin',
-  templateUrl: './signin.component.html',
-  styleUrls: ['./signin.component.scss']
+    selector: 'app-signin',
+    templateUrl: './signin.component.html',
+    styleUrls: ['./signin.component.scss'],
 })
 export class SigninComponent implements OnInit {
-  authForm: FormGroup;
+    authForm: FormGroup;
+    anonymousForm: FormGroup;
 
-  constructor(
-    private userService: UserService,
-    private store: Store<State>,
-  ) { }
+    constructor(
+        private userService: UserService,
+        private store: Store<State>,
+    ) { }
 
-  ngOnInit(): void {
-    this.authForm = new FormGroup({
-      login: new FormControl('',
-        {
-          updateOn: 'change',
-          validators: [
-            Validators.pattern('^[a-zA-Z0-9_-]+$'),
-            Validators.minLength(2),
-            Validators.maxLength(50),
-            Validators.required,
-          ],
-        }),
-      password: new FormControl('',
-        {
-          updateOn: 'change',
-          validators: [
-            Validators.pattern('^[a-zA-Z0-9_-]+$'),
-            Validators.minLength(2),
-            Validators.maxLength(50),
-            Validators.required,
-          ],
-        }),
-    })
-  }
+    ngOnInit(): void {
+        this.authForm = new FormGroup({
+            login: new FormControl('',
+                {
+                    updateOn: 'change',
+                    validators: [
+                        Validators.pattern('^[a-zA-Z0-9_-]+$'),
+                        Validators.minLength(2),
+                        Validators.maxLength(50),
+                        Validators.required,
+                    ],
+                }),
+            password: new FormControl('',
+                {
+                    updateOn: 'change',
+                    validators: [
+                        Validators.pattern('^[a-zA-Z0-9_-]+$'),
+                        Validators.minLength(2),
+                        Validators.maxLength(50),
+                        Validators.required,
+                    ],
+                }),
+        });
 
-  loginHandler() {
-    this.store.dispatch(new Login(this.authForm.value));
-  }
+        this.anonymousForm = new FormGroup({
+            name: new FormControl('',
+                {
+                    updateOn: 'change',
+                    validators: [
+                        Validators.pattern('^[a-zA-Z0-9_-]+$'),
+                        Validators.minLength(2),
+                        Validators.maxLength(50),
+                        Validators.required,
+                    ],
+                }),
+        });
+    }
+
+    loginHandler() {
+        this.store.dispatch(new Login(this.authForm.value));
+    }
+
+    loginAnonymousHandler() {
+        this.store.dispatch(new LoginAnonymous(this.anonymousForm.get('name').value));
+    }
 }

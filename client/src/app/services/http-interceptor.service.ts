@@ -9,46 +9,41 @@ import { State } from '../store/reducers';
 import { LoadUser } from '../store/actions/user.actions';
 
 @Injectable({
-  providedIn: 'root'
+    providedIn: 'root',
 })
 
 export class HttpInterceptorService implements HttpInterceptor {
+    constructor(
+        private store: Store<State>,
+    ) { }
 
-  constructor(
-    private store: Store<State>,
-  ) { }
-
-  intercept(req: HttpRequest<any>, next: HttpHandler):
+    intercept(req: HttpRequest<any>, next: HttpHandler):
     Observable<HttpEvent<any>> {
-
     // to modify request
-    // req = req.clone();
-    // return next.handle(req);
+        // req = req.clone();
+        // return next.handle(req);
 
 
-    return next.handle(req).pipe(
-      tap((event: HttpEvent<any>) => {
-        if (event instanceof HttpResponse) {
+        return next.handle(req).pipe(
+            tap((event: HttpEvent<any>) => {
+                if (event instanceof HttpResponse) {
+                    // fire action to check user auth
+                    this.store.dispatch(new LoadUser());
 
-          // fire action to check user auth
-          this.store.dispatch(new LoadUser());
+                    // to modify response
+                    // event = event.clone({ body: this.modifyBody(event.body) });
+                }
+                return event;
+            },
+            ));
+    }
 
-          // to modify response
-          // event = event.clone({ body: this.modifyBody(event.body) });
-        }
-        return event;
-      }
-      ));
-
-  }
-  
-  private modifyBody(body: any) {
+    private modifyBody(body: any) {
     /*
     * write your logic to modify the body
     * */
-    return body;
-  }
-
+        return body;
+    }
 }
 
 

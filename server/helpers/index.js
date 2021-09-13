@@ -1,46 +1,31 @@
 const bcrypt = require('bcryptjs');
-const { Types } = require('mongoose');
 const jwt = require('jsonwebtoken');
-
-const config = require('../config/');
 const { UserModel } = require('../models');
-const { ClientError, DbError, ServerError } = require('../errors');
+const { ClientError, DbError } = require('../errors');
 
-const authentication = (req, res, next) => {
-  if (req.isAuthenticated()) {
-    return next();
-  } else {
-    return next(new ClientError({ message: 'notAuthenticated', status: 401 }));
-  }
-};
+// const extractAnonymousName = (login) => {
+//   const anonymousNamePrefix = config.get('anonymousNamePrefix');
+//   const nameStartPosition = anonymousNamePrefix.length;
+//   const nameLimitter = config.get('anonymousNameLimitter');
+//   const isAnonymousName = login.indexOf(anonymousNamePrefix) === 0;
+//   const nameLimitterPosition = login.indexOf(nameLimitter);
+//   const isNameLimitter = nameLimitterPosition > nameStartPosition;
 
-const setFrontendAuthCookieMW = (req, res, next) => {
-  const frontendCookieName = config.get('FRONTEND_AUTH_SID');
-  const JWTSecret = config.get('JWT_SECRET');
-  let token;
-  if (req.isAuthenticated()) {
-    const user = {
-      _id: req.user._doc._id,
-      login: req.user._doc.login,
-    };
-    // console.log('user', user.provider);
-    token = createJWT('', {user}, 7200, JWTSecret); // 2 hours
-  } else {
-    // console.log('not user', null);
-    token = createJWT('', { user: null }, 7200, JWTSecret); // 2 hours
-  }
-  res.cookie(
-    frontendCookieName,
-    token,
-    {
-      secure: true,
-      httpOnly: false,
-      maxAge: 7200000, // 2 hours
-      sameSite: 'Lax',
-    },
-  );
-  next();
-};
+//   if (isAnonymousName && isNameLimitter) {
+//     return login.slice(nameStartPosition, nameLimitterPosition);
+//   }
+//   return null;
+// };
+
+// const blockAnonymous = (login) => {
+//   return new Promise((resolve, reject) => {
+//     const name = extractAnonymousName(login);
+//     if (name) {
+//       return reject(new ClientError({ message: 'Access denied', status: 401, code: 'wrongCredentials' }));
+//     }
+//     return resolve();
+//   });
+// };
 
 
 const createJWT = (prefix, sub, expire, secret) => {
@@ -58,7 +43,6 @@ const createJWT = (prefix, sub, expire, secret) => {
   );
 };
 
-
 const createUserHelper = (user) => {
   return new Promise((resolve, reject) => {
     isLoginUniqueHelper(user.login)
@@ -66,11 +50,16 @@ const createUserHelper = (user) => {
       .then((hash) => {
         user.password = hash;
         user.createdAt = Date.now();
-        console.log('user2', user);
+        user.role = 'user';
+        return user;
         const userModel = new UserModel(user);
         return userModel.save();
       })
-      .then((savedUser) => resolve(savedUser))
+      // .then((user) => UserModel.createUser(user))
+      .then((savedUser) => {
+        console.log('savedUser', savedUser);
+        resolve(savedUser);
+      })
       .catch((err) => reject(err));
   });
 };
@@ -80,9 +69,9 @@ const isLoginUniqueHelper = (login) => {
     UserModel.findOne({ login })
       .then((user) => {
         if (user) {
-          reject(new ClientError({ message: 'Цей логін вже використовується', status: 422, code: 'uniqueConflict' }));
+          return reject(new ClientError({ message: 'Цей логін вже використовується', status: 422, code: 'uniqueConflict' }));
         }
-        resolve();
+        return resolve();
       })
       .catch((err) => reject(err));
   });
@@ -154,8 +143,6 @@ const checkDbResNotNull = (result) => {
 };
 
 module.exports = {
-  authentication,
-  setFrontendAuthCookieMW,
   createUserHelper,
   isLoginUniqueHelper,
   isLoginExists,

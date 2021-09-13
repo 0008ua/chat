@@ -1,0 +1,36 @@
+<nav class="navbar navbar-expand-lg sticky-top navbar-dark bg-dark">
+  <div class="container-fluid">
+    <a class="navbar-brand mx-3" [routerLink]="['/']">Chat Application</a>
+    <button class="navbar-toggler" type="button" (click)="toggle()" aria-controls="navbarToggler" aria-expanded="false"
+      aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarToggler" #navbarToggler>
+      <ul class="navbar-nav ms-auto mb-2 mb-lg-0 me-5">
+
+        <li class="nav-item mx-3">
+          <a class="nav-link" aria-current="page" [routerLink]="['/']" [routerLinkActiveOptions]="{exact: true}"
+            routerLinkActive="active">Home</a>
+        </li>
+        <!-- <li *ngIf="user && user?.role !== 'guest'" class="nav-item mx-3"> -->
+        <li *ngIf="user" class="nav-item mx-3">
+          <a class="nav-link" aria-current="page" [routerLink]="['/chat']" [routerLinkActiveOptions]="{exact: true}"
+            routerLinkActive="active">Chat</a>
+        </li>
+        <li *ngIf="!user || user?.role === 'guest'" class="nav-item mx-3">
+          <a class="nav-link" aria-current="page" [routerLink]="['auth', 'signin']"
+            [routerLinkActiveOptions]="{exact: true}" routerLinkActive="active">Signin</a>
+        </li>
+        <li *ngIf="user && user?.role !== 'guest'" class="nav-item mx-3">
+          <a class="nav-link cursor-pointer" aria-current="page" (click)="logout()">Logout</a>
+        </li>
+        <li *ngIf="user && user?.role === 'guest'" class="nav-item mx-3">
+          <a class="nav-link cursor-pointer" aria-current="page" (click)="logout()">Leave chat</a>
+        </li>
+        <li *ngIf="user" class="nav-item navbar-text mx-3 text-light">
+          <i class="bi bi-person-circle pe-2"></i>{{user.name}}
+        </li>
+      </ul>
+    </div>
+  </div>
+</nav>

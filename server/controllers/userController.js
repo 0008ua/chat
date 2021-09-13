@@ -1,25 +1,37 @@
 const { createUserHelper } = require('../helpers');
 const { UserModel } = require('../models');
-
-const login = (req, res, next) => {
-  const user = req.body;
-  res.status(200).json('login ok ' + user.login);
-};
+const uuidv4 = require('uuid').v4;
+const config = require('../config/');
 
 const nullResponse = (req, res, next) => {
   res.status(200).json(null);
 };
 
+const signupAnomymousUser = (req, res, next) => {
+  const {name} = req.body;
+  const anomymousUser = {
+    login: uuidv4(),
+    password: null,
+    createdAt: Date.now(),
+    name,
+    role: 'guest',
+  };
+  req.body = anomymousUser;
+  const userModel = new UserModel(anomymousUser);
+  userModel.save()
+    .then((savedUser) => next())
+    .catch((err) => next(err));
+};
+
 const signup = (req, res, next) => {
   const user = req.body;
-  console.log('user', user);
   return createUserHelper(user)
     .then((savedUser) => {
-      const userModel = new UserModel(savedUser);
-      return userModel.save();
+      return next();
+      // const userModel = new UserModel(savedUser);
+      // return userModel.save();
     })
-    // .then((result) => checkDbResOkOne(result))
-    .then((_) => next())
+    // .then((_) => next())
     .catch((err) => next(err));
 };
 
@@ -29,8 +41,8 @@ const logout = (req, res, next) => {
 };
 
 module.exports = {
-  login,
   signup,
+  signupAnomymousUser,
   logout,
   nullResponse,
 };

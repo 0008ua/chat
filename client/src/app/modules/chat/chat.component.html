@@ -1,2 +1,49 @@
-<p>chat works!</p>
-<button class="btn btn-success" (click)="logout()">Logout</button>
+<div class="container-fluid text-light bg-dark">
+
+  <!-- <div *ngIf="!user" class="chat-regular">
+        <div class="chat-regular__connect connect text-dark bg-light">
+          <div class="connect__item">
+            <input #inpName type="text" class="form-control" placeholder="Enter your name">
+            <button class="btn btn-danger" [disabled]="!nameValidation" (click)="loginAnonymous()">connect</button>
+          </div>
+        </div>
+      </div> -->
+
+  <div class="chat-regular">
+    <div *ngIf="user" class="chat-regular__contacts">
+      <div class="contacts text-dark bg-light">
+        <div *ngIf="contacts.length"  class="contacts__header">
+          <div *ngFor="let contact of contacts" (click)="startChat(contact)" class="contacts__item">
+            <i *ngIf="contact.userRole !== 'user'" class="bi bi-person-fill pe-2 float-start"></i>
+            <i *ngIf="contact.userRole === 'user'" class="bi bi-person-check-fill pe-2 float-start"></i>
+            <span>{{contact.userName}}</span>
+            <i *ngIf="contact.room_id && !contact.socket_id" class="bi bi-bookmark-fill ps-2 float-end"></i>
+            <i *ngIf="!contact.room_id && contact.socket_id" class="bi bi-bookmark-check ps-2 float-end"></i>
+            <i *ngIf="contact.room_id && contact.socket_id" class="bi bi-bookmark-check-fill ps-2 float-end"></i>
+          </div>
+        </div>
+
+        <!--
+        <div class="contacts__item">
+          contacts
+        </div> -->
+      </div>
+    </div>
+    <div #chatMessages class="chat-regular__messages text-dark bg-light">
+      <div class="messages">
+        <div *ngFor="let msg of msgs" class="messages__item"
+          [ngClass]="[msg.author_id === user?._id ? 'messages__item_out': 'messages__item_in']">
+          {{msg | json}}
+        </div>
+      </div>
+    </div>
+
+    <div class="chat-regular__compose compose">
+      <div class="compose__text">
+        <input #inpMsg type="text" class="form-control" placeholder="message">
+      </div>
+      <div class="compose__send compose__send_regular">
+        <button class="btn btn-light" (click)="send()" [disabled]="!textValidation">Send</button>
+      </div>
+    </div>
+  </div>
