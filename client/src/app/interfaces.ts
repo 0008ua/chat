@@ -51,7 +51,11 @@ export interface Msg {
 
 export interface Room {
     _id?: string;
-    members: string[];
+    // members: string[];
+    members: {
+        member_id: string;
+        readedUntil: any;
+    }[];
     roomType: 'private';
     anotherUser?: User;
     anotherUser_id?: string;
