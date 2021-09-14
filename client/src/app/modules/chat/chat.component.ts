@@ -81,6 +81,7 @@ export class ChatComponent implements OnInit, AfterViewChecked, AfterViewInit {
             .subscribe((contacts) => {
                 this.contacts = contacts;
             });
+            
         this.socketService.onSocketEvent('activeSockets')
             .subscribe((activeSockets) => {
                 activeSockets = activeSockets.filter((socket: ActiveSocket) => socket.user_id !== this.user._id);

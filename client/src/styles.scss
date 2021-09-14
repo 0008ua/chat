@@ -108,11 +108,12 @@
   border-radius: 0.5rem;
   height: 100%;
   padding: 1rem;
+    background-color: $gray-400;
   &__header {
     margin: 0.5rem 0;
-    background-color: $gray-400;
+    background-color: $gray-600;
     border-radius: 0.5rem;
-    padding: 0.5rem;
+    padding: 0.5rem 1rem;
   }
   &__item {
     margin: 0.5rem 0;
@@ -120,6 +121,9 @@
     border-radius: 0.5rem;
     padding: 0.5rem;
     cursor: pointer;
+    &_active {
+      background-color: $gray-400;
+    }
   }
 }
 

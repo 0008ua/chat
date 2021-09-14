@@ -12,8 +12,12 @@
   <div class="chat-regular">
     <div *ngIf="user" class="chat-regular__contacts">
       <div class="contacts text-dark bg-light">
-        <div *ngIf="contacts.length"  class="contacts__header">
-          <div *ngFor="let contact of contacts" (click)="startChat(contact)" class="contacts__item">
+        <!-- <div *ngIf="activeContact" class="contacts__header">
+          {{activeContact?.userName}}
+        </div> -->
+        <ng-container *ngIf="contacts.length">
+          <div *ngFor="let contact of contacts" (click)="startChat(contact)" class="contacts__item"
+            [ngClass]="{'contacts__item_active': contact.user_id === activeContact?.user_id}">
             <i *ngIf="contact.userRole !== 'user'" class="bi bi-person-fill pe-2 float-start"></i>
             <i *ngIf="contact.userRole === 'user'" class="bi bi-person-check-fill pe-2 float-start"></i>
             <span>{{contact.userName}}</span>
@@ -21,16 +25,14 @@
             <i *ngIf="!contact.room_id && contact.socket_id" class="bi bi-bookmark-check ps-2 float-end"></i>
             <i *ngIf="contact.room_id && contact.socket_id" class="bi bi-bookmark-check-fill ps-2 float-end"></i>
           </div>
-        </div>
+        </ng-container>
 
-        <!--
-        <div class="contacts__item">
-          contacts
-        </div> -->
+
       </div>
     </div>
     <div #chatMessages class="chat-regular__messages text-dark bg-light">
       <div class="messages">
+
         <div *ngFor="let msg of msgs" class="messages__item"
           [ngClass]="[msg.author_id === user?._id ? 'messages__item_out': 'messages__item_in']">
           {{msg | json}}

@@ -35,6 +35,7 @@ MsgSchema.statics.createMsg = function({
   const message = {
     text, author_id, room_id,
   };
+  console.log('message', message);
   return this.create(message);
 };
 

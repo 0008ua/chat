@@ -85,43 +85,46 @@ __webpack_require__.r(__webpack_exports__);
 const _c0 = ["chatMessages"];
 const _c1 = ["inpMsg"];
 const _c2 = ["inpName"];
-function ChatComponent_div_5_div_4_div_2_i_2_Template(rf, ctx) { if (rf & 1) {
+function ChatComponent_div_5_ng_container_5_div_2_i_2_Template(rf, ctx) { if (rf & 1) {
+    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelement"](0, "i", 23);
+} }
+function ChatComponent_div_5_ng_container_5_div_2_i_4_Template(rf, ctx) { if (rf & 1) {
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelement"](0, "i", 24);
 } }
-function ChatComponent_div_5_div_4_div_2_i_4_Template(rf, ctx) { if (rf & 1) {
+function ChatComponent_div_5_ng_container_5_div_2_i_9_Template(rf, ctx) { if (rf & 1) {
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelement"](0, "i", 25);
 } }
-function ChatComponent_div_5_div_4_div_2_i_9_Template(rf, ctx) { if (rf & 1) {
+function ChatComponent_div_5_ng_container_5_div_2_i_11_Template(rf, ctx) { if (rf & 1) {
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelement"](0, "i", 26);
 } }
-function ChatComponent_div_5_div_4_div_2_i_11_Template(rf, ctx) { if (rf & 1) {
+function ChatComponent_div_5_ng_container_5_div_2_i_13_Template(rf, ctx) { if (rf & 1) {
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelement"](0, "i", 27);
 } }
-function ChatComponent_div_5_div_4_div_2_i_13_Template(rf, ctx) { if (rf & 1) {
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelement"](0, "i", 28);
-} }
-function ChatComponent_div_5_div_4_div_2_Template(rf, ctx) { if (rf & 1) {
+const _c3 = function (a0) { return { "contacts__item_active": a0 }; };
+function ChatComponent_div_5_ng_container_5_div_2_Template(rf, ctx) { if (rf & 1) {
     const _r13 = _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵgetCurrentView"]();
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementStart"](0, "div", 18);
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵlistener"]("click", function ChatComponent_div_5_div_4_div_2_Template_div_click_0_listener() { _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵrestoreView"](_r13); const contact_r6 = ctx.$implicit; const ctx_r12 = _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵnextContext"](3); return ctx_r12.startChat(contact_r6); });
+    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementStart"](0, "div", 17);
+    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵlistener"]("click", function ChatComponent_div_5_ng_container_5_div_2_Template_div_click_0_listener() { _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵrestoreView"](_r13); const contact_r6 = ctx.$implicit; const ctx_r12 = _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵnextContext"](3); return ctx_r12.startChat(contact_r6); });
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtext"](1, "\n            ");
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtemplate"](2, ChatComponent_div_5_div_4_div_2_i_2_Template, 1, 0, "i", 19);
+    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtemplate"](2, ChatComponent_div_5_ng_container_5_div_2_i_2_Template, 1, 0, "i", 18);
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtext"](3, "\n            ");
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtemplate"](4, ChatComponent_div_5_div_4_div_2_i_4_Template, 1, 0, "i", 20);
+    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtemplate"](4, ChatComponent_div_5_ng_container_5_div_2_i_4_Template, 1, 0, "i", 19);
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtext"](5, "\n            ");
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementStart"](6, "span");
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtext"](7);
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementEnd"]();
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtext"](8, "\n            ");
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtemplate"](9, ChatComponent_div_5_div_4_div_2_i_9_Template, 1, 0, "i", 21);
+    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtemplate"](9, ChatComponent_div_5_ng_container_5_div_2_i_9_Template, 1, 0, "i", 20);
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtext"](10, "\n            ");
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtemplate"](11, ChatComponent_div_5_div_4_div_2_i_11_Template, 1, 0, "i", 22);
+    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtemplate"](11, ChatComponent_div_5_ng_container_5_div_2_i_11_Template, 1, 0, "i", 21);
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtext"](12, "\n            ");
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtemplate"](13, ChatComponent_div_5_div_4_div_2_i_13_Template, 1, 0, "i", 23);
+    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtemplate"](13, ChatComponent_div_5_ng_container_5_div_2_i_13_Template, 1, 0, "i", 22);
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtext"](14, "\n          ");
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementEnd"]();
 } if (rf & 2) {
     const contact_r6 = ctx.$implicit;
+    const ctx_r5 = _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵnextContext"](3);
+    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵproperty"]("ngClass", _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵpureFunction1"](7, _c3, contact_r6.user_id === (ctx_r5.activeContact == null ? null : ctx_r5.activeContact.user_id)));
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵadvance"](2);
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵproperty"]("ngIf", contact_r6.userRole !== "user");
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵadvance"](2);
@@ -135,12 +138,12 @@ function ChatComponent_div_5_div_4_div_2_Template(rf, ctx) { if (rf & 1) {
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵadvance"](2);
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵproperty"]("ngIf", contact_r6.room_id && contact_r6.socket_id);
 } }
-function ChatComponent_div_5_div_4_Template(rf, ctx) { if (rf & 1) {
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementStart"](0, "div", 16);
+function ChatComponent_div_5_ng_container_5_Template(rf, ctx) { if (rf & 1) {
+    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementContainerStart"](0);
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtext"](1, "\n          ");
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtemplate"](2, ChatComponent_div_5_div_4_div_2_Template, 15, 6, "div", 17);
+    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtemplate"](2, ChatComponent_div_5_ng_container_5_div_2_Template, 15, 9, "div", 16);
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtext"](3, "\n        ");
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementEnd"]();
+    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementContainerEnd"]();
 } if (rf & 2) {
     const ctx_r4 = _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵnextContext"](2);
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵadvance"](2);
@@ -151,27 +154,27 @@ function ChatComponent_div_5_Template(rf, ctx) { if (rf & 1) {
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtext"](1, "\n      ");
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementStart"](2, "div", 14);
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtext"](3, "\n        ");
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtemplate"](4, ChatComponent_div_5_div_4_Template, 4, 1, "div", 15);
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtext"](5, "\n\n        ");
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtext"](6, "\n      ");
+    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtext"](4, "\n        ");
+    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtemplate"](5, ChatComponent_div_5_ng_container_5_Template, 4, 1, "ng-container", 15);
+    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtext"](6, "\n\n\n      ");
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementEnd"]();
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtext"](7, "\n    ");
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementEnd"]();
 } if (rf & 2) {
     const ctx_r0 = _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵnextContext"]();
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵadvance"](4);
+    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵadvance"](5);
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵproperty"]("ngIf", ctx_r0.contacts.length);
 } }
-const _c3 = function (a0) { return [a0]; };
+const _c4 = function (a0) { return [a0]; };
 function ChatComponent_div_12_Template(rf, ctx) { if (rf & 1) {
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementStart"](0, "div", 29);
+    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementStart"](0, "div", 28);
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtext"](1);
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵpipe"](2, "json");
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementEnd"]();
 } if (rf & 2) {
     const msg_r14 = ctx.$implicit;
     const ctx_r2 = _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵnextContext"]();
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵproperty"]("ngClass", _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵpureFunction1"](4, _c3, msg_r14.author_id === (ctx_r2.user == null ? null : ctx_r2.user._id) ? "messages__item_out" : "messages__item_in"));
+    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵproperty"]("ngClass", _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵpureFunction1"](4, _c4, msg_r14.author_id === (ctx_r2.user == null ? null : ctx_r2.user._id) ? "messages__item_out" : "messages__item_in"));
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵadvance"](1);
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtextInterpolate1"]("\n          ", _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵpipeBind1"](2, 2, msg_r14), "\n        ");
 } }
@@ -307,7 +310,7 @@ ChatComponent.ɵcmp = _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵdefineComp
         _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵqueryRefresh"](_t = _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵloadQuery"]()) && (ctx.inpName = _t.first);
     } }, hostBindings: function ChatComponent_HostBindings(rf, ctx) { if (rf & 1) {
         _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵlistener"]("keydown", function ChatComponent_keydown_HostBindingHandler($event) { return ctx.onPress($event); });
-    } }, decls: 32, vars: 3, consts: [[1, "container-fluid", "text-light", "bg-dark"], [1, "chat-regular"], ["class", "chat-regular__contacts", 4, "ngIf"], [1, "chat-regular__messages", "text-dark", "bg-light"], ["chatMessages", ""], [1, "messages"], ["class", "messages__item", 3, "ngClass", 4, "ngFor", "ngForOf"], [1, "chat-regular__compose", "compose"], [1, "compose__text"], ["type", "text", "placeholder", "message", 1, "form-control"], ["inpMsg", ""], [1, "compose__send", "compose__send_regular"], [1, "btn", "btn-light", 3, "disabled", "click"], [1, "chat-regular__contacts"], [1, "contacts", "text-dark", "bg-light"], ["class", "contacts__header", 4, "ngIf"], [1, "contacts__header"], ["class", "contacts__item", 3, "click", 4, "ngFor", "ngForOf"], [1, "contacts__item", 3, "click"], ["class", "bi bi-person-fill pe-2 float-start", 4, "ngIf"], ["class", "bi bi-person-check-fill pe-2 float-start", 4, "ngIf"], ["class", "bi bi-bookmark-fill ps-2 float-end", 4, "ngIf"], ["class", "bi bi-bookmark-check ps-2 float-end", 4, "ngIf"], ["class", "bi bi-bookmark-check-fill ps-2 float-end", 4, "ngIf"], [1, "bi", "bi-person-fill", "pe-2", "float-start"], [1, "bi", "bi-person-check-fill", "pe-2", "float-start"], [1, "bi", "bi-bookmark-fill", "ps-2", "float-end"], [1, "bi", "bi-bookmark-check", "ps-2", "float-end"], [1, "bi", "bi-bookmark-check-fill", "ps-2", "float-end"], [1, "messages__item", 3, "ngClass"]], template: function ChatComponent_Template(rf, ctx) { if (rf & 1) {
+    } }, decls: 32, vars: 3, consts: [[1, "container-fluid", "text-light", "bg-dark"], [1, "chat-regular"], ["class", "chat-regular__contacts", 4, "ngIf"], [1, "chat-regular__messages", "text-dark", "bg-light"], ["chatMessages", ""], [1, "messages"], ["class", "messages__item", 3, "ngClass", 4, "ngFor", "ngForOf"], [1, "chat-regular__compose", "compose"], [1, "compose__text"], ["type", "text", "placeholder", "message", 1, "form-control"], ["inpMsg", ""], [1, "compose__send", "compose__send_regular"], [1, "btn", "btn-light", 3, "disabled", "click"], [1, "chat-regular__contacts"], [1, "contacts", "text-dark", "bg-light"], [4, "ngIf"], ["class", "contacts__item", 3, "ngClass", "click", 4, "ngFor", "ngForOf"], [1, "contacts__item", 3, "ngClass", "click"], ["class", "bi bi-person-fill pe-2 float-start", 4, "ngIf"], ["class", "bi bi-person-check-fill pe-2 float-start", 4, "ngIf"], ["class", "bi bi-bookmark-fill ps-2 float-end", 4, "ngIf"], ["class", "bi bi-bookmark-check ps-2 float-end", 4, "ngIf"], ["class", "bi bi-bookmark-check-fill ps-2 float-end", 4, "ngIf"], [1, "bi", "bi-person-fill", "pe-2", "float-start"], [1, "bi", "bi-person-check-fill", "pe-2", "float-start"], [1, "bi", "bi-bookmark-fill", "ps-2", "float-end"], [1, "bi", "bi-bookmark-check", "ps-2", "float-end"], [1, "bi", "bi-bookmark-check-fill", "ps-2", "float-end"], [1, "messages__item", 3, "ngClass"]], template: function ChatComponent_Template(rf, ctx) { if (rf & 1) {
         _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementStart"](0, "div", 0);
         _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtext"](1, "\n\n  ");
         _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtext"](2, "\n\n  ");
@@ -318,7 +321,7 @@ ChatComponent.ɵcmp = _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵdefineComp
         _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementStart"](7, "div", 3, 4);
         _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtext"](9, "\n      ");
         _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementStart"](10, "div", 5);
-        _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtext"](11, "\n        ");
+        _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtext"](11, "\n\n        ");
         _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtemplate"](12, ChatComponent_div_12_Template, 3, 6, "div", 6);
         _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtext"](13, "\n      ");
         _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementEnd"]();
