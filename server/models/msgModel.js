@@ -1,5 +1,6 @@
 const { mongoose } = require('../config/mongoose');
-const Schema = mongoose.Schema;
+const { Schema, Types } = mongoose;
+const { ObjectId } = Types;
 
 const MsgSchema = new Schema({
   text: {
@@ -7,11 +8,11 @@ const MsgSchema = new Schema({
     required: true,
   },
   author_id: {
-    type: mongoose.ObjectId,
+    type: ObjectId,
     required: true,
   },
   room_id: {
-    type: mongoose.ObjectId,
+    type: ObjectId,
     required: true,
   },
   // modifiedAt: {
@@ -33,13 +34,14 @@ MsgSchema.statics.createMsg = function({
   room_id,
 }) {
   const message = {
-    text, author_id, room_id,
+    text, author_id: new ObjectId(author_id), room_id: new ObjectId(room_id),
   };
   console.log('message', message);
   return this.create(message);
 };
 
 MsgSchema.statics.getMsgs = function(query) {
+  // console.log('query', query)
   return this.find(query);
 };
 

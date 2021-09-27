@@ -660,9 +660,6 @@ class SocketNsp extends ngx_socket_io__WEBPACK_IMPORTED_MODULE_3__["Socket"] {
     }
 }
 class SocketService {
-    // guestNsp: SocketNsp;
-    // userNsp: SocketNsp;
-    // adminNsp: SocketNsp;
     constructor(socket, store, http) {
         this.socket = socket;
         this.store = store;
@@ -671,12 +668,6 @@ class SocketService {
             .subscribe((user) => this.user = user);
         this.store.select(_store_reducers_socket_reducer__WEBPACK_IMPORTED_MODULE_6__["getMsgs"])
             .subscribe((msgs) => this.msgs = msgs);
-        // create socket namespaces and event listeners for every namespace
-        // for (const nsp of NSP) {
-        //     this[nsp + 'Nsp'] = this.socketNspFactory(nsp);
-        // }
-        // for socket root namespace
-        // this.socket;
     }
     isConnected(nsp) {
         if (nsp) {
@@ -714,12 +705,10 @@ class SocketService {
         }
         return this.socket.fromEvent(socketEvent).pipe(Object(rxjs_operators__WEBPACK_IMPORTED_MODULE_4__["map"])((data) => data));
     }
-    emitSocketEvent(socketEvent, socketData, nsp) {
-        if (nsp) {
-            this.socketNsp(nsp).emit(socketEvent, socketData);
-            return;
-        }
-        this.socket.emit(socketEvent, socketData);
+    emitSocketEvent(socketEvent, socketData) {
+        // if use emit with callback then pass socketData as array [Message, callback]
+        // otherwise socketData is Message object
+        this.socket.emit(socketEvent, ...Array.isArray(socketData) ? socketData : [socketData]);
     }
     socketNsp(nsp) {
         return this[nsp + 'Nsp'];
@@ -727,24 +716,23 @@ class SocketService {
     socketNspFactory(nsp) {
         return new SocketNsp({ url: '/' + nsp + 'Nsp', options: {} });
     }
-    // getMessages({room_id}): Observable<Message[]> {
-    //     return of([{
-    //         _id: 'sdfsdfsdfsd',
-    //         text: 'test1',
-    //         delivered: true,
-    //     }, {
-    //         _id: 'sdfs2342dfsdfsd',
-    //         text: 'test2',
-    //         delivered: false,
-    //     }]);
-    // }
     getUserRooms() {
         const httpOptions = {
             headers: new _angular_common_http__WEBPACK_IMPORTED_MODULE_0__["HttpHeaders"]({
                 'Content-Type': 'application/json',
             }),
         };
-        return this.http.get('api/socket/get-user-rooms', httpOptions);
+        return this.http.get('api/socket/get-user-rooms', httpOptions).pipe(Object(rxjs_operators__WEBPACK_IMPORTED_MODULE_4__["tap"])((getUserRooms) => console.log('getUserRooms', getUserRooms)));
+    }
+    getUnreadedMessagesQty(room_id) {
+        const httpOptions = {
+            headers: new _angular_common_http__WEBPACK_IMPORTED_MODULE_0__["HttpHeaders"]({
+                'Content-Type': 'application/json',
+            }),
+            params: new _angular_common_http__WEBPACK_IMPORTED_MODULE_0__["HttpParams"]()
+                .set('room_id', room_id),
+        };
+        return this.http.get('api/socket/get-unreaded-messages-qty', httpOptions);
     }
     getGetActiveContactMsgs({ anotherUser_id, room_id }) {
         const httpOptions = {
@@ -757,25 +745,6 @@ class SocketService {
         };
         return this.http.get('api/socket/get-active-contact-msgs', httpOptions);
     }
-    // sendMessage(msg: Message) {
-    //     this.guestNsp.emit('message', msg);
-    // }
-    // getMessage() {
-    //     return this.guestNsp.fromEvent('message').pipe(
-    //         map((msg: Message) => msg));
-    // }
-    // getMWError() {
-    //     return this.guestNsp.fromEvent('connect_error').pipe(
-    //         map((msg: any) => {
-    //             console.log('msg error', msg);
-    //             return msg;
-    //         }));
-    // }
-    // getPatchMessage(): Observable<void> {
-    //     return this.guestNsp.fromEvent('patchMessage').pipe(
-    //         map((patch) => this.store.dispatch(new GetMessagesSuccess(this.patchMessage(patch)))),
-    //     );
-    // }
     uuid() {
         return Object(uuid__WEBPACK_IMPORTED_MODULE_5__["v4"])();
     }
@@ -1184,19 +1153,21 @@ class SocketEffects {
         // );
         this.getUserRooms = this.actions$.pipe(Object(_ngrx_effects__WEBPACK_IMPORTED_MODULE_3__["ofType"])(_actions_socket_actions__WEBPACK_IMPORTED_MODULE_6__["SocketActionTypes"].GetUserRooms), 
         // map((action: fromSocketActions.GetUserRooms) => action.payload),
-        Object(rxjs_operators__WEBPACK_IMPORTED_MODULE_5__["switchMap"])((payload) => this.socketService.getUserRooms().pipe(Object(rxjs_operators__WEBPACK_IMPORTED_MODULE_5__["switchMap"])((userRooms) => [
+        Object(rxjs_operators__WEBPACK_IMPORTED_MODULE_5__["switchMap"])((payload) => this.socketService.getUserRooms().pipe(Object(rxjs_operators__WEBPACK_IMPORTED_MODULE_5__["tap"])((userRooms) => console.log('get userRooms', userRooms)), Object(rxjs_operators__WEBPACK_IMPORTED_MODULE_5__["switchMap"])((userRooms) => [
             new _actions_socket_actions__WEBPACK_IMPORTED_MODULE_6__["GetUserRoomsSuccess"]({ userRooms }),
             new _actions_socket_actions__WEBPACK_IMPORTED_MODULE_6__["UpdateContacts"](),
         ]), Object(rxjs_operators__WEBPACK_IMPORTED_MODULE_5__["catchError"])((err) => Object(rxjs__WEBPACK_IMPORTED_MODULE_4__["of"])(new _actions_socket_actions__WEBPACK_IMPORTED_MODULE_6__["SocketError"](err))))));
         this.getActiveContactMsgs = this.actions$.pipe(Object(_ngrx_effects__WEBPACK_IMPORTED_MODULE_3__["ofType"])(_actions_socket_actions__WEBPACK_IMPORTED_MODULE_6__["SocketActionTypes"].GetActiveContactMsgs), Object(rxjs_operators__WEBPACK_IMPORTED_MODULE_5__["map"])((action) => action.payload), Object(rxjs_operators__WEBPACK_IMPORTED_MODULE_5__["switchMap"])((payload) => this.socketService.getGetActiveContactMsgs({
             anotherUser_id: payload.activeContact.user_id, room_id: payload.activeContact.room_id,
         }).pipe(Object(rxjs_operators__WEBPACK_IMPORTED_MODULE_5__["map"])((activeContactMsgs) => new _actions_socket_actions__WEBPACK_IMPORTED_MODULE_6__["GetActiveContactMsgsSuccess"]({ activeContactMsgs })), Object(rxjs_operators__WEBPACK_IMPORTED_MODULE_5__["catchError"])((err) => Object(rxjs__WEBPACK_IMPORTED_MODULE_4__["of"])(new _actions_socket_actions__WEBPACK_IMPORTED_MODULE_6__["SocketError"](err))))));
-        this.activeSockets = this.actions$.pipe(Object(_ngrx_effects__WEBPACK_IMPORTED_MODULE_3__["ofType"])(_actions_socket_actions__WEBPACK_IMPORTED_MODULE_6__["SocketActionTypes"].ActiveSockets), Object(rxjs_operators__WEBPACK_IMPORTED_MODULE_5__["map"])((_) => new _actions_socket_actions__WEBPACK_IMPORTED_MODULE_6__["UpdateContacts"]()), Object(rxjs_operators__WEBPACK_IMPORTED_MODULE_5__["catchError"])((err) => Object(rxjs__WEBPACK_IMPORTED_MODULE_4__["of"])(new _actions_socket_actions__WEBPACK_IMPORTED_MODULE_6__["SocketError"](err))));
+        this.activeSockets = this.actions$.pipe(Object(_ngrx_effects__WEBPACK_IMPORTED_MODULE_3__["ofType"])(_actions_socket_actions__WEBPACK_IMPORTED_MODULE_6__["SocketActionTypes"].ActiveSockets), Object(rxjs_operators__WEBPACK_IMPORTED_MODULE_5__["tap"])((tap) => console.log('tap', tap)), Object(rxjs_operators__WEBPACK_IMPORTED_MODULE_5__["map"])((_) => new _actions_socket_actions__WEBPACK_IMPORTED_MODULE_6__["UpdateContacts"]()), Object(rxjs_operators__WEBPACK_IMPORTED_MODULE_5__["catchError"])((err) => Object(rxjs__WEBPACK_IMPORTED_MODULE_4__["of"])(new _actions_socket_actions__WEBPACK_IMPORTED_MODULE_6__["SocketError"](err))));
         this.updateContacts = this.actions$.pipe(Object(_ngrx_effects__WEBPACK_IMPORTED_MODULE_3__["ofType"])(_actions_socket_actions__WEBPACK_IMPORTED_MODULE_6__["SocketActionTypes"].UpdateContacts), Object(rxjs_operators__WEBPACK_IMPORTED_MODULE_5__["withLatestFrom"])(this.store$.select(_reducers_socket_reducer__WEBPACK_IMPORTED_MODULE_1__["getUserRooms"]), this.store$.select(_reducers_socket_reducer__WEBPACK_IMPORTED_MODULE_1__["getActiveSockets"])), Object(rxjs_operators__WEBPACK_IMPORTED_MODULE_5__["map"])(([action, userRooms, activeSockets]) => {
+            console.log('userRooms-update', userRooms);
+            console.log('activeSockets-update', activeSockets);
             let contacts = userRooms.map((room) => {
                 let socket_id = null;
                 activeSockets = activeSockets.filter((socket) => {
-                    if (socket.user_id === room.anotherUser_id) {
+                    if (socket.user_id === room.anotherUser._id) {
                         socket_id = socket.socket_id;
                         return false;
                     }
@@ -1206,10 +1177,11 @@ class SocketEffects {
                     const result = {
                         socket_id,
                         room_id: room._id,
-                        user_id: room.anotherUser_id,
+                        user_id: room.anotherUser._id,
                         userName: room.anotherUser.name,
                         userLogin: room.anotherUser.login,
                         userRole: room.anotherUser.role,
+                        unreadedMessagesQty: 0,
                     };
                     socket_id = null;
                     return result;
@@ -1217,18 +1189,40 @@ class SocketEffects {
                 const result = {
                     socket_id: null,
                     room_id: room._id,
-                    user_id: room.anotherUser_id,
+                    user_id: room.anotherUser._id,
                     userName: room.anotherUser.name,
                     userLogin: room.anotherUser.login,
                     userRole: room.anotherUser.role,
+                    unreadedMessagesQty: 0,
                 };
                 return result;
             });
             contacts = [...contacts, ...activeSockets.map((socket) => (Object.assign(Object.assign({}, socket), { room_id: null })))];
             return contacts;
-        }), Object(rxjs_operators__WEBPACK_IMPORTED_MODULE_5__["map"])((contacts) => {
-            return new _actions_socket_actions__WEBPACK_IMPORTED_MODULE_6__["UpdateContactsSuccess"]({ contacts });
+        }), Object(rxjs_operators__WEBPACK_IMPORTED_MODULE_5__["mergeMap"])((contacts) => Object(rxjs__WEBPACK_IMPORTED_MODULE_4__["from"])(contacts).pipe(Object(rxjs_operators__WEBPACK_IMPORTED_MODULE_5__["mergeMap"])((contact) => {
+            if (contact.room_id) {
+                return this.socketService.getUnreadedMessagesQty(contact.room_id).pipe(Object(rxjs_operators__WEBPACK_IMPORTED_MODULE_5__["map"])((qty) => (Object.assign(Object.assign({}, contact), { unreadedMessagesQty: qty }))));
+            }
+            return Object(rxjs__WEBPACK_IMPORTED_MODULE_4__["of"])(Object.assign(Object.assign({}, contact), { unreadedMessagesQty: 0 }));
+        }), Object(rxjs_operators__WEBPACK_IMPORTED_MODULE_5__["toArray"])())), Object(rxjs_operators__WEBPACK_IMPORTED_MODULE_5__["map"])((contacts) => {
+            console.log('contacts', contacts);
+            return new _actions_socket_actions__WEBPACK_IMPORTED_MODULE_6__["UpdateContactsSuccess"]({ contacts: contacts });
         }), Object(rxjs_operators__WEBPACK_IMPORTED_MODULE_5__["catchError"])((err) => Object(rxjs__WEBPACK_IMPORTED_MODULE_4__["of"])(new _actions_socket_actions__WEBPACK_IMPORTED_MODULE_6__["SocketError"](err))));
+        // ),
+        // ),
+        // map((contacts) => of(contacts).pipe(
+        // switchMap((contacts) => {
+        //     return of(contacts.map((contact) => {
+        //         if (contact.room_id) {
+        //             return this.socketService.getUnreadedMessagesQty(contact.room_id).pipe(
+        //                 map((qty) => ({...contact, unreadedMessagesQty: qty}))
+        //             );
+        //         }
+        //         return ({ ...contact, unreadedMessagesQty: 0 });
+        //     }));
+        // }),
+        // )),
+        // );
         this.connect = this.actions$.pipe(Object(_ngrx_effects__WEBPACK_IMPORTED_MODULE_3__["ofType"])(_actions_socket_actions__WEBPACK_IMPORTED_MODULE_6__["SocketActionTypes"].Connect), Object(rxjs_operators__WEBPACK_IMPORTED_MODULE_5__["map"])((action) => action.payload), Object(rxjs_operators__WEBPACK_IMPORTED_MODULE_5__["map"])((payload) => {
             this.socketService.connect(payload);
             // this.socketService.connect('user');
@@ -1651,7 +1645,7 @@ _angular_platform_browser__WEBPACK_IMPORTED_MODULE_3__["platformBrowser"]().boot
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-module.exports = __webpack_require__(/*! C:\it\vs\chat\client\src\main.ts */"./src/main.ts");
+module.exports = __webpack_require__(/*! C:\it\chat\client\src\main.ts */"./src/main.ts");
 
 
 /***/ })

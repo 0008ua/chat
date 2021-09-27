@@ -20,7 +20,7 @@
             [ngClass]="{'contacts__item_active': contact.user_id === activeContact?.user_id}">
             <i *ngIf="contact.userRole !== 'user'" class="bi bi-person-fill pe-2 float-start"></i>
             <i *ngIf="contact.userRole === 'user'" class="bi bi-person-check-fill pe-2 float-start"></i>
-            <span>{{contact.userName}}</span>
+            <span>{{contact.userName}} </span><span class="badge bg-secondary">{{contact.unreadedMessagesQty}}</span>
             <i *ngIf="contact.room_id && !contact.socket_id" class="bi bi-bookmark-fill ps-2 float-end"></i>
             <i *ngIf="!contact.room_id && contact.socket_id" class="bi bi-bookmark-check ps-2 float-end"></i>
             <i *ngIf="contact.room_id && contact.socket_id" class="bi bi-bookmark-check-fill ps-2 float-end"></i>

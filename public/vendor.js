@@ -70,6 +70,192 @@
 
 /***/ }),
 
+/***/ "../node_modules/component-emitter/index.js":
+/*!**************************************************!*\
+  !*** ../node_modules/component-emitter/index.js ***!
+  \**************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+
+/**
+ * Expose `Emitter`.
+ */
+
+if (true) {
+  module.exports = Emitter;
+}
+
+/**
+ * Initialize a new `Emitter`.
+ *
+ * @api public
+ */
+
+function Emitter(obj) {
+  if (obj) return mixin(obj);
+};
+
+/**
+ * Mixin the emitter properties.
+ *
+ * @param {Object} obj
+ * @return {Object}
+ * @api private
+ */
+
+function mixin(obj) {
+  for (var key in Emitter.prototype) {
+    obj[key] = Emitter.prototype[key];
+  }
+  return obj;
+}
+
+/**
+ * Listen on the given `event` with `fn`.
+ *
+ * @param {String} event
+ * @param {Function} fn
+ * @return {Emitter}
+ * @api public
+ */
+
+Emitter.prototype.on =
+Emitter.prototype.addEventListener = function(event, fn){
+  this._callbacks = this._callbacks || {};
+  (this._callbacks['$' + event] = this._callbacks['$' + event] || [])
+    .push(fn);
+  return this;
+};
+
+/**
+ * Adds an `event` listener that will be invoked a single
+ * time then automatically removed.
+ *
+ * @param {String} event
+ * @param {Function} fn
+ * @return {Emitter}
+ * @api public
+ */
+
+Emitter.prototype.once = function(event, fn){
+  function on() {
+    this.off(event, on);
+    fn.apply(this, arguments);
+  }
+
+  on.fn = fn;
+  this.on(event, on);
+  return this;
+};
+
+/**
+ * Remove the given callback for `event` or all
+ * registered callbacks.
+ *
+ * @param {String} event
+ * @param {Function} fn
+ * @return {Emitter}
+ * @api public
+ */
+
+Emitter.prototype.off =
+Emitter.prototype.removeListener =
+Emitter.prototype.removeAllListeners =
+Emitter.prototype.removeEventListener = function(event, fn){
+  this._callbacks = this._callbacks || {};
+
+  // all
+  if (0 == arguments.length) {
+    this._callbacks = {};
+    return this;
+  }
+
+  // specific event
+  var callbacks = this._callbacks['$' + event];
+  if (!callbacks) return this;
+
+  // remove all handlers
+  if (1 == arguments.length) {
+    delete this._callbacks['$' + event];
+    return this;
+  }
+
+  // remove specific handler
+  var cb;
+  for (var i = 0; i < callbacks.length; i++) {
+    cb = callbacks[i];
+    if (cb === fn || cb.fn === fn) {
+      callbacks.splice(i, 1);
+      break;
+    }
+  }
+
+  // Remove event specific arrays for event types that no
+  // one is subscribed for to avoid memory leak.
+  if (callbacks.length === 0) {
+    delete this._callbacks['$' + event];
+  }
+
+  return this;
+};
+
+/**
+ * Emit `event` with the given args.
+ *
+ * @param {String} event
+ * @param {Mixed} ...
+ * @return {Emitter}
+ */
+
+Emitter.prototype.emit = function(event){
+  this._callbacks = this._callbacks || {};
+
+  var args = new Array(arguments.length - 1)
+    , callbacks = this._callbacks['$' + event];
+
+  for (var i = 1; i < arguments.length; i++) {
+    args[i - 1] = arguments[i];
+  }
+
+  if (callbacks) {
+    callbacks = callbacks.slice(0);
+    for (var i = 0, len = callbacks.length; i < len; ++i) {
+      callbacks[i].apply(this, args);
+    }
+  }
+
+  return this;
+};
+
+/**
+ * Return array of callbacks for `event`.
+ *
+ * @param {String} event
+ * @return {Array}
+ * @api public
+ */
+
+Emitter.prototype.listeners = function(event){
+  this._callbacks = this._callbacks || {};
+  return this._callbacks['$' + event] || [];
+};
+
+/**
+ * Check if this emitter has `event` handlers.
+ *
+ * @param {String} event
+ * @return {Boolean}
+ * @api public
+ */
+
+Emitter.prototype.hasListeners = function(event){
+  return !! this.listeners(event).length;
+};
+
+
+/***/ }),
+
 /***/ "../node_modules/engine.io-parser/lib/commons.js":
 /*!*******************************************************!*\
   !*** ../node_modules/engine.io-parser/lib/commons.js ***!
@@ -276,457 +462,6 @@ module.exports = {
   decodePacket,
   decodePayload
 };
-
-
-/***/ }),
-
-/***/ "../node_modules/socket.io-parser/dist/binary.js":
-/*!*******************************************************!*\
-  !*** ../node_modules/socket.io-parser/dist/binary.js ***!
-  \*******************************************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.reconstructPacket = exports.deconstructPacket = void 0;
-const is_binary_1 = __webpack_require__(/*! ./is-binary */ "../node_modules/socket.io-parser/dist/is-binary.js");
-/**
- * Replaces every Buffer | ArrayBuffer | Blob | File in packet with a numbered placeholder.
- *
- * @param {Object} packet - socket.io event packet
- * @return {Object} with deconstructed packet and list of buffers
- * @public
- */
-function deconstructPacket(packet) {
-    const buffers = [];
-    const packetData = packet.data;
-    const pack = packet;
-    pack.data = _deconstructPacket(packetData, buffers);
-    pack.attachments = buffers.length; // number of binary 'attachments'
-    return { packet: pack, buffers: buffers };
-}
-exports.deconstructPacket = deconstructPacket;
-function _deconstructPacket(data, buffers) {
-    if (!data)
-        return data;
-    if (is_binary_1.isBinary(data)) {
-        const placeholder = { _placeholder: true, num: buffers.length };
-        buffers.push(data);
-        return placeholder;
-    }
-    else if (Array.isArray(data)) {
-        const newData = new Array(data.length);
-        for (let i = 0; i < data.length; i++) {
-            newData[i] = _deconstructPacket(data[i], buffers);
-        }
-        return newData;
-    }
-    else if (typeof data === "object" && !(data instanceof Date)) {
-        const newData = {};
-        for (const key in data) {
-            if (data.hasOwnProperty(key)) {
-                newData[key] = _deconstructPacket(data[key], buffers);
-            }
-        }
-        return newData;
-    }
-    return data;
-}
-/**
- * Reconstructs a binary packet from its placeholder packet and buffers
- *
- * @param {Object} packet - event packet with placeholders
- * @param {Array} buffers - binary buffers to put in placeholder positions
- * @return {Object} reconstructed packet
- * @public
- */
-function reconstructPacket(packet, buffers) {
-    packet.data = _reconstructPacket(packet.data, buffers);
-    packet.attachments = undefined; // no longer useful
-    return packet;
-}
-exports.reconstructPacket = reconstructPacket;
-function _reconstructPacket(data, buffers) {
-    if (!data)
-        return data;
-    if (data && data._placeholder) {
-        return buffers[data.num]; // appropriate buffer (should be natural order anyway)
-    }
-    else if (Array.isArray(data)) {
-        for (let i = 0; i < data.length; i++) {
-            data[i] = _reconstructPacket(data[i], buffers);
-        }
-    }
-    else if (typeof data === "object") {
-        for (const key in data) {
-            if (data.hasOwnProperty(key)) {
-                data[key] = _reconstructPacket(data[key], buffers);
-            }
-        }
-    }
-    return data;
-}
-
-
-/***/ }),
-
-/***/ "../node_modules/socket.io-parser/dist/index.js":
-/*!******************************************************!*\
-  !*** ../node_modules/socket.io-parser/dist/index.js ***!
-  \******************************************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.Decoder = exports.Encoder = exports.PacketType = exports.protocol = void 0;
-const Emitter = __webpack_require__(/*! component-emitter */ "./node_modules/component-emitter/index.js");
-const binary_1 = __webpack_require__(/*! ./binary */ "../node_modules/socket.io-parser/dist/binary.js");
-const is_binary_1 = __webpack_require__(/*! ./is-binary */ "../node_modules/socket.io-parser/dist/is-binary.js");
-const debug = __webpack_require__(/*! debug */ "./node_modules/debug/src/browser.js")("socket.io-parser");
-/**
- * Protocol version.
- *
- * @public
- */
-exports.protocol = 5;
-var PacketType;
-(function (PacketType) {
-    PacketType[PacketType["CONNECT"] = 0] = "CONNECT";
-    PacketType[PacketType["DISCONNECT"] = 1] = "DISCONNECT";
-    PacketType[PacketType["EVENT"] = 2] = "EVENT";
-    PacketType[PacketType["ACK"] = 3] = "ACK";
-    PacketType[PacketType["CONNECT_ERROR"] = 4] = "CONNECT_ERROR";
-    PacketType[PacketType["BINARY_EVENT"] = 5] = "BINARY_EVENT";
-    PacketType[PacketType["BINARY_ACK"] = 6] = "BINARY_ACK";
-})(PacketType = exports.PacketType || (exports.PacketType = {}));
-/**
- * A socket.io Encoder instance
- */
-class Encoder {
-    /**
-     * Encode a packet as a single string if non-binary, or as a
-     * buffer sequence, depending on packet type.
-     *
-     * @param {Object} obj - packet object
-     */
-    encode(obj) {
-        debug("encoding packet %j", obj);
-        if (obj.type === PacketType.EVENT || obj.type === PacketType.ACK) {
-            if (is_binary_1.hasBinary(obj)) {
-                obj.type =
-                    obj.type === PacketType.EVENT
-                        ? PacketType.BINARY_EVENT
-                        : PacketType.BINARY_ACK;
-                return this.encodeAsBinary(obj);
-            }
-        }
-        return [this.encodeAsString(obj)];
-    }
-    /**
-     * Encode packet as string.
-     */
-    encodeAsString(obj) {
-        // first is type
-        let str = "" + obj.type;
-        // attachments if we have them
-        if (obj.type === PacketType.BINARY_EVENT ||
-            obj.type === PacketType.BINARY_ACK) {
-            str += obj.attachments + "-";
-        }
-        // if we have a namespace other than `/`
-        // we append it followed by a comma `,`
-        if (obj.nsp && "/" !== obj.nsp) {
-            str += obj.nsp + ",";
-        }
-        // immediately followed by the id
-        if (null != obj.id) {
-            str += obj.id;
-        }
-        // json data
-        if (null != obj.data) {
-            str += JSON.stringify(obj.data);
-        }
-        debug("encoded %j as %s", obj, str);
-        return str;
-    }
-    /**
-     * Encode packet as 'buffer sequence' by removing blobs, and
-     * deconstructing packet into object with placeholders and
-     * a list of buffers.
-     */
-    encodeAsBinary(obj) {
-        const deconstruction = binary_1.deconstructPacket(obj);
-        const pack = this.encodeAsString(deconstruction.packet);
-        const buffers = deconstruction.buffers;
-        buffers.unshift(pack); // add packet info to beginning of data list
-        return buffers; // write all the buffers
-    }
-}
-exports.Encoder = Encoder;
-/**
- * A socket.io Decoder instance
- *
- * @return {Object} decoder
- */
-class Decoder extends Emitter {
-    constructor() {
-        super();
-    }
-    /**
-     * Decodes an encoded packet string into packet JSON.
-     *
-     * @param {String} obj - encoded packet
-     */
-    add(obj) {
-        let packet;
-        if (typeof obj === "string") {
-            packet = this.decodeString(obj);
-            if (packet.type === PacketType.BINARY_EVENT ||
-                packet.type === PacketType.BINARY_ACK) {
-                // binary packet's json
-                this.reconstructor = new BinaryReconstructor(packet);
-                // no attachments, labeled binary but no binary data to follow
-                if (packet.attachments === 0) {
-                    super.emit("decoded", packet);
-                }
-            }
-            else {
-                // non-binary full packet
-                super.emit("decoded", packet);
-            }
-        }
-        else if (is_binary_1.isBinary(obj) || obj.base64) {
-            // raw binary data
-            if (!this.reconstructor) {
-                throw new Error("got binary data when not reconstructing a packet");
-            }
-            else {
-                packet = this.reconstructor.takeBinaryData(obj);
-                if (packet) {
-                    // received final buffer
-                    this.reconstructor = null;
-                    super.emit("decoded", packet);
-                }
-            }
-        }
-        else {
-            throw new Error("Unknown type: " + obj);
-        }
-    }
-    /**
-     * Decode a packet String (JSON data)
-     *
-     * @param {String} str
-     * @return {Object} packet
-     */
-    decodeString(str) {
-        let i = 0;
-        // look up type
-        const p = {
-            type: Number(str.charAt(0)),
-        };
-        if (PacketType[p.type] === undefined) {
-            throw new Error("unknown packet type " + p.type);
-        }
-        // look up attachments if type binary
-        if (p.type === PacketType.BINARY_EVENT ||
-            p.type === PacketType.BINARY_ACK) {
-            const start = i + 1;
-            while (str.charAt(++i) !== "-" && i != str.length) { }
-            const buf = str.substring(start, i);
-            if (buf != Number(buf) || str.charAt(i) !== "-") {
-                throw new Error("Illegal attachments");
-            }
-            p.attachments = Number(buf);
-        }
-        // look up namespace (if any)
-        if ("/" === str.charAt(i + 1)) {
-            const start = i + 1;
-            while (++i) {
-                const c = str.charAt(i);
-                if ("," === c)
-                    break;
-                if (i === str.length)
-                    break;
-            }
-            p.nsp = str.substring(start, i);
-        }
-        else {
-            p.nsp = "/";
-        }
-        // look up id
-        const next = str.charAt(i + 1);
-        if ("" !== next && Number(next) == next) {
-            const start = i + 1;
-            while (++i) {
-                const c = str.charAt(i);
-                if (null == c || Number(c) != c) {
-                    --i;
-                    break;
-                }
-                if (i === str.length)
-                    break;
-            }
-            p.id = Number(str.substring(start, i + 1));
-        }
-        // look up json data
-        if (str.charAt(++i)) {
-            const payload = tryParse(str.substr(i));
-            if (Decoder.isPayloadValid(p.type, payload)) {
-                p.data = payload;
-            }
-            else {
-                throw new Error("invalid payload");
-            }
-        }
-        debug("decoded %s as %j", str, p);
-        return p;
-    }
-    static isPayloadValid(type, payload) {
-        switch (type) {
-            case PacketType.CONNECT:
-                return typeof payload === "object";
-            case PacketType.DISCONNECT:
-                return payload === undefined;
-            case PacketType.CONNECT_ERROR:
-                return typeof payload === "string" || typeof payload === "object";
-            case PacketType.EVENT:
-            case PacketType.BINARY_EVENT:
-                return Array.isArray(payload) && payload.length > 0;
-            case PacketType.ACK:
-            case PacketType.BINARY_ACK:
-                return Array.isArray(payload);
-        }
-    }
-    /**
-     * Deallocates a parser's resources
-     */
-    destroy() {
-        if (this.reconstructor) {
-            this.reconstructor.finishedReconstruction();
-        }
-    }
-}
-exports.Decoder = Decoder;
-function tryParse(str) {
-    try {
-        return JSON.parse(str);
-    }
-    catch (e) {
-        return false;
-    }
-}
-/**
- * A manager of a binary event's 'buffer sequence'. Should
- * be constructed whenever a packet of type BINARY_EVENT is
- * decoded.
- *
- * @param {Object} packet
- * @return {BinaryReconstructor} initialized reconstructor
- */
-class BinaryReconstructor {
-    constructor(packet) {
-        this.packet = packet;
-        this.buffers = [];
-        this.reconPack = packet;
-    }
-    /**
-     * Method to be called when binary data received from connection
-     * after a BINARY_EVENT packet.
-     *
-     * @param {Buffer | ArrayBuffer} binData - the raw binary data received
-     * @return {null | Object} returns null if more binary data is expected or
-     *   a reconstructed packet object if all buffers have been received.
-     */
-    takeBinaryData(binData) {
-        this.buffers.push(binData);
-        if (this.buffers.length === this.reconPack.attachments) {
-            // done with buffer list
-            const packet = binary_1.reconstructPacket(this.reconPack, this.buffers);
-            this.finishedReconstruction();
-            return packet;
-        }
-        return null;
-    }
-    /**
-     * Cleans up binary packet reconstruction variables.
-     */
-    finishedReconstruction() {
-        this.reconPack = null;
-        this.buffers = [];
-    }
-}
-
-
-/***/ }),
-
-/***/ "../node_modules/socket.io-parser/dist/is-binary.js":
-/*!**********************************************************!*\
-  !*** ../node_modules/socket.io-parser/dist/is-binary.js ***!
-  \**********************************************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.hasBinary = exports.isBinary = void 0;
-const withNativeArrayBuffer = typeof ArrayBuffer === "function";
-const isView = (obj) => {
-    return typeof ArrayBuffer.isView === "function"
-        ? ArrayBuffer.isView(obj)
-        : obj.buffer instanceof ArrayBuffer;
-};
-const toString = Object.prototype.toString;
-const withNativeBlob = typeof Blob === "function" ||
-    (typeof Blob !== "undefined" &&
-        toString.call(Blob) === "[object BlobConstructor]");
-const withNativeFile = typeof File === "function" ||
-    (typeof File !== "undefined" &&
-        toString.call(File) === "[object FileConstructor]");
-/**
- * Returns true if obj is a Buffer, an ArrayBuffer, a Blob or a File.
- *
- * @private
- */
-function isBinary(obj) {
-    return ((withNativeArrayBuffer && (obj instanceof ArrayBuffer || isView(obj))) ||
-        (withNativeBlob && obj instanceof Blob) ||
-        (withNativeFile && obj instanceof File));
-}
-exports.isBinary = isBinary;
-function hasBinary(obj, toJSON) {
-    if (!obj || typeof obj !== "object") {
-        return false;
-    }
-    if (Array.isArray(obj)) {
-        for (let i = 0, l = obj.length; i < l; i++) {
-            if (hasBinary(obj[i])) {
-                return true;
-            }
-        }
-        return false;
-    }
-    if (isBinary(obj)) {
-        return true;
-    }
-    if (obj.toJSON &&
-        typeof obj.toJSON === "function" &&
-        arguments.length === 1) {
-        return hasBinary(obj.toJSON(), true);
-    }
-    for (const key in obj) {
-        if (Object.prototype.hasOwnProperty.call(obj, key) && hasBinary(obj[key])) {
-            return true;
-        }
-    }
-    return false;
-}
-exports.hasBinary = hasBinary;
 
 
 /***/ }),
@@ -61978,192 +61713,6 @@ defineJQueryPlugin(Toast);
 
 /***/ }),
 
-/***/ "./node_modules/component-emitter/index.js":
-/*!*************************************************!*\
-  !*** ./node_modules/component-emitter/index.js ***!
-  \*************************************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
-
-
-/**
- * Expose `Emitter`.
- */
-
-if (true) {
-  module.exports = Emitter;
-}
-
-/**
- * Initialize a new `Emitter`.
- *
- * @api public
- */
-
-function Emitter(obj) {
-  if (obj) return mixin(obj);
-};
-
-/**
- * Mixin the emitter properties.
- *
- * @param {Object} obj
- * @return {Object}
- * @api private
- */
-
-function mixin(obj) {
-  for (var key in Emitter.prototype) {
-    obj[key] = Emitter.prototype[key];
-  }
-  return obj;
-}
-
-/**
- * Listen on the given `event` with `fn`.
- *
- * @param {String} event
- * @param {Function} fn
- * @return {Emitter}
- * @api public
- */
-
-Emitter.prototype.on =
-Emitter.prototype.addEventListener = function(event, fn){
-  this._callbacks = this._callbacks || {};
-  (this._callbacks['$' + event] = this._callbacks['$' + event] || [])
-    .push(fn);
-  return this;
-};
-
-/**
- * Adds an `event` listener that will be invoked a single
- * time then automatically removed.
- *
- * @param {String} event
- * @param {Function} fn
- * @return {Emitter}
- * @api public
- */
-
-Emitter.prototype.once = function(event, fn){
-  function on() {
-    this.off(event, on);
-    fn.apply(this, arguments);
-  }
-
-  on.fn = fn;
-  this.on(event, on);
-  return this;
-};
-
-/**
- * Remove the given callback for `event` or all
- * registered callbacks.
- *
- * @param {String} event
- * @param {Function} fn
- * @return {Emitter}
- * @api public
- */
-
-Emitter.prototype.off =
-Emitter.prototype.removeListener =
-Emitter.prototype.removeAllListeners =
-Emitter.prototype.removeEventListener = function(event, fn){
-  this._callbacks = this._callbacks || {};
-
-  // all
-  if (0 == arguments.length) {
-    this._callbacks = {};
-    return this;
-  }
-
-  // specific event
-  var callbacks = this._callbacks['$' + event];
-  if (!callbacks) return this;
-
-  // remove all handlers
-  if (1 == arguments.length) {
-    delete this._callbacks['$' + event];
-    return this;
-  }
-
-  // remove specific handler
-  var cb;
-  for (var i = 0; i < callbacks.length; i++) {
-    cb = callbacks[i];
-    if (cb === fn || cb.fn === fn) {
-      callbacks.splice(i, 1);
-      break;
-    }
-  }
-
-  // Remove event specific arrays for event types that no
-  // one is subscribed for to avoid memory leak.
-  if (callbacks.length === 0) {
-    delete this._callbacks['$' + event];
-  }
-
-  return this;
-};
-
-/**
- * Emit `event` with the given args.
- *
- * @param {String} event
- * @param {Mixed} ...
- * @return {Emitter}
- */
-
-Emitter.prototype.emit = function(event){
-  this._callbacks = this._callbacks || {};
-
-  var args = new Array(arguments.length - 1)
-    , callbacks = this._callbacks['$' + event];
-
-  for (var i = 1; i < arguments.length; i++) {
-    args[i - 1] = arguments[i];
-  }
-
-  if (callbacks) {
-    callbacks = callbacks.slice(0);
-    for (var i = 0, len = callbacks.length; i < len; ++i) {
-      callbacks[i].apply(this, args);
-    }
-  }
-
-  return this;
-};
-
-/**
- * Return array of callbacks for `event`.
- *
- * @param {String} event
- * @return {Array}
- * @api public
- */
-
-Emitter.prototype.listeners = function(event){
-  this._callbacks = this._callbacks || {};
-  return this._callbacks['$' + event] || [];
-};
-
-/**
- * Check if this emitter has `event` handlers.
- *
- * @param {String} event
- * @return {Boolean}
- * @api public
- */
-
-Emitter.prototype.hasListeners = function(event){
-  return !! this.listeners(event).length;
-};
-
-
-/***/ }),
-
 /***/ "./node_modules/debug/src/browser.js":
 /*!*******************************************!*\
   !*** ./node_modules/debug/src/browser.js ***!
@@ -63329,7 +62878,7 @@ module.exports.parser = __webpack_require__(/*! engine.io-parser */ "../node_mod
 /***/ (function(module, exports, __webpack_require__) {
 
 const transports = __webpack_require__(/*! ./transports/index */ "./node_modules/ngx-socket-io/node_modules/engine.io-client/lib/transports/index.js");
-const Emitter = __webpack_require__(/*! component-emitter */ "./node_modules/component-emitter/index.js");
+const Emitter = __webpack_require__(/*! component-emitter */ "../node_modules/component-emitter/index.js");
 const debug = __webpack_require__(/*! debug */ "./node_modules/debug/src/browser.js")("engine.io-client:socket");
 const parser = __webpack_require__(/*! engine.io-parser */ "../node_modules/engine.io-parser/lib/index.js");
 const parseuri = __webpack_require__(/*! parseuri */ "./node_modules/parseuri/index.js");
@@ -64023,7 +63572,7 @@ module.exports = Socket;
 /***/ (function(module, exports, __webpack_require__) {
 
 const parser = __webpack_require__(/*! engine.io-parser */ "../node_modules/engine.io-parser/lib/index.js");
-const Emitter = __webpack_require__(/*! component-emitter */ "./node_modules/component-emitter/index.js");
+const Emitter = __webpack_require__(/*! component-emitter */ "../node_modules/component-emitter/index.js");
 const debug = __webpack_require__(/*! debug */ "./node_modules/debug/src/browser.js")("engine.io-client:transport");
 
 class Transport extends Emitter {
@@ -64418,7 +63967,7 @@ module.exports = JSONPPolling;
 
 const XMLHttpRequest = __webpack_require__(/*! ../../contrib/xmlhttprequest-ssl/XMLHttpRequest */ "./node_modules/ngx-socket-io/node_modules/engine.io-client/lib/xmlhttprequest.js");
 const Polling = __webpack_require__(/*! ./polling */ "./node_modules/ngx-socket-io/node_modules/engine.io-client/lib/transports/polling.js");
-const Emitter = __webpack_require__(/*! component-emitter */ "./node_modules/component-emitter/index.js");
+const Emitter = __webpack_require__(/*! component-emitter */ "../node_modules/component-emitter/index.js");
 const { pick } = __webpack_require__(/*! ../util */ "./node_modules/ngx-socket-io/node_modules/engine.io-client/lib/util.js");
 const globalThis = __webpack_require__(/*! ../globalThis */ "./node_modules/ngx-socket-io/node_modules/engine.io-client/lib/globalThis.browser.js");
 
@@ -65391,7 +64940,7 @@ exports.io = lookup;
  *
  * @public
  */
-var socket_io_parser_1 = __webpack_require__(/*! socket.io-parser */ "../node_modules/socket.io-parser/dist/index.js");
+var socket_io_parser_1 = __webpack_require__(/*! socket.io-parser */ "./node_modules/ngx-socket-io/node_modules/socket.io-parser/dist/index.js");
 Object.defineProperty(exports, "protocol", { enumerable: true, get: function () { return socket_io_parser_1.protocol; } });
 /**
  * `connect`.
@@ -65427,7 +64976,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.Manager = void 0;
 const eio = __webpack_require__(/*! engine.io-client */ "./node_modules/ngx-socket-io/node_modules/engine.io-client/lib/index.js");
 const socket_1 = __webpack_require__(/*! ./socket */ "./node_modules/ngx-socket-io/node_modules/socket.io-client/build/socket.js");
-const parser = __webpack_require__(/*! socket.io-parser */ "../node_modules/socket.io-parser/dist/index.js");
+const parser = __webpack_require__(/*! socket.io-parser */ "./node_modules/ngx-socket-io/node_modules/socket.io-parser/dist/index.js");
 const on_1 = __webpack_require__(/*! ./on */ "./node_modules/ngx-socket-io/node_modules/socket.io-client/build/on.js");
 const Backoff = __webpack_require__(/*! backo2 */ "./node_modules/backo2/index.js");
 const typed_events_1 = __webpack_require__(/*! ./typed-events */ "./node_modules/ngx-socket-io/node_modules/socket.io-client/build/typed-events.js");
@@ -65834,7 +65383,7 @@ exports.on = on;
 
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Socket = void 0;
-const socket_io_parser_1 = __webpack_require__(/*! socket.io-parser */ "../node_modules/socket.io-parser/dist/index.js");
+const socket_io_parser_1 = __webpack_require__(/*! socket.io-parser */ "./node_modules/ngx-socket-io/node_modules/socket.io-parser/dist/index.js");
 const on_1 = __webpack_require__(/*! ./on */ "./node_modules/ngx-socket-io/node_modules/socket.io-client/build/on.js");
 const typed_events_1 = __webpack_require__(/*! ./typed-events */ "./node_modules/ngx-socket-io/node_modules/socket.io-client/build/typed-events.js");
 const debug = __webpack_require__(/*! debug */ "./node_modules/debug/src/browser.js")("socket.io-client:socket");
@@ -66306,7 +65855,7 @@ exports.Socket = Socket;
 
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.StrictEventEmitter = void 0;
-const Emitter = __webpack_require__(/*! component-emitter */ "./node_modules/component-emitter/index.js");
+const Emitter = __webpack_require__(/*! component-emitter */ "../node_modules/component-emitter/index.js");
 /**
  * Strictly typed version of an `EventEmitter`. A `TypedEventEmitter` takes type
  * parameters for mappings of event names to event data types, and strictly
@@ -66453,6 +66002,457 @@ function url(uri, path = "", loc) {
     return obj;
 }
 exports.url = url;
+
+
+/***/ }),
+
+/***/ "./node_modules/ngx-socket-io/node_modules/socket.io-parser/dist/binary.js":
+/*!*********************************************************************************!*\
+  !*** ./node_modules/ngx-socket-io/node_modules/socket.io-parser/dist/binary.js ***!
+  \*********************************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.reconstructPacket = exports.deconstructPacket = void 0;
+const is_binary_1 = __webpack_require__(/*! ./is-binary */ "./node_modules/ngx-socket-io/node_modules/socket.io-parser/dist/is-binary.js");
+/**
+ * Replaces every Buffer | ArrayBuffer | Blob | File in packet with a numbered placeholder.
+ *
+ * @param {Object} packet - socket.io event packet
+ * @return {Object} with deconstructed packet and list of buffers
+ * @public
+ */
+function deconstructPacket(packet) {
+    const buffers = [];
+    const packetData = packet.data;
+    const pack = packet;
+    pack.data = _deconstructPacket(packetData, buffers);
+    pack.attachments = buffers.length; // number of binary 'attachments'
+    return { packet: pack, buffers: buffers };
+}
+exports.deconstructPacket = deconstructPacket;
+function _deconstructPacket(data, buffers) {
+    if (!data)
+        return data;
+    if (is_binary_1.isBinary(data)) {
+        const placeholder = { _placeholder: true, num: buffers.length };
+        buffers.push(data);
+        return placeholder;
+    }
+    else if (Array.isArray(data)) {
+        const newData = new Array(data.length);
+        for (let i = 0; i < data.length; i++) {
+            newData[i] = _deconstructPacket(data[i], buffers);
+        }
+        return newData;
+    }
+    else if (typeof data === "object" && !(data instanceof Date)) {
+        const newData = {};
+        for (const key in data) {
+            if (data.hasOwnProperty(key)) {
+                newData[key] = _deconstructPacket(data[key], buffers);
+            }
+        }
+        return newData;
+    }
+    return data;
+}
+/**
+ * Reconstructs a binary packet from its placeholder packet and buffers
+ *
+ * @param {Object} packet - event packet with placeholders
+ * @param {Array} buffers - binary buffers to put in placeholder positions
+ * @return {Object} reconstructed packet
+ * @public
+ */
+function reconstructPacket(packet, buffers) {
+    packet.data = _reconstructPacket(packet.data, buffers);
+    packet.attachments = undefined; // no longer useful
+    return packet;
+}
+exports.reconstructPacket = reconstructPacket;
+function _reconstructPacket(data, buffers) {
+    if (!data)
+        return data;
+    if (data && data._placeholder) {
+        return buffers[data.num]; // appropriate buffer (should be natural order anyway)
+    }
+    else if (Array.isArray(data)) {
+        for (let i = 0; i < data.length; i++) {
+            data[i] = _reconstructPacket(data[i], buffers);
+        }
+    }
+    else if (typeof data === "object") {
+        for (const key in data) {
+            if (data.hasOwnProperty(key)) {
+                data[key] = _reconstructPacket(data[key], buffers);
+            }
+        }
+    }
+    return data;
+}
+
+
+/***/ }),
+
+/***/ "./node_modules/ngx-socket-io/node_modules/socket.io-parser/dist/index.js":
+/*!********************************************************************************!*\
+  !*** ./node_modules/ngx-socket-io/node_modules/socket.io-parser/dist/index.js ***!
+  \********************************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.Decoder = exports.Encoder = exports.PacketType = exports.protocol = void 0;
+const Emitter = __webpack_require__(/*! component-emitter */ "../node_modules/component-emitter/index.js");
+const binary_1 = __webpack_require__(/*! ./binary */ "./node_modules/ngx-socket-io/node_modules/socket.io-parser/dist/binary.js");
+const is_binary_1 = __webpack_require__(/*! ./is-binary */ "./node_modules/ngx-socket-io/node_modules/socket.io-parser/dist/is-binary.js");
+const debug = __webpack_require__(/*! debug */ "./node_modules/debug/src/browser.js")("socket.io-parser");
+/**
+ * Protocol version.
+ *
+ * @public
+ */
+exports.protocol = 5;
+var PacketType;
+(function (PacketType) {
+    PacketType[PacketType["CONNECT"] = 0] = "CONNECT";
+    PacketType[PacketType["DISCONNECT"] = 1] = "DISCONNECT";
+    PacketType[PacketType["EVENT"] = 2] = "EVENT";
+    PacketType[PacketType["ACK"] = 3] = "ACK";
+    PacketType[PacketType["CONNECT_ERROR"] = 4] = "CONNECT_ERROR";
+    PacketType[PacketType["BINARY_EVENT"] = 5] = "BINARY_EVENT";
+    PacketType[PacketType["BINARY_ACK"] = 6] = "BINARY_ACK";
+})(PacketType = exports.PacketType || (exports.PacketType = {}));
+/**
+ * A socket.io Encoder instance
+ */
+class Encoder {
+    /**
+     * Encode a packet as a single string if non-binary, or as a
+     * buffer sequence, depending on packet type.
+     *
+     * @param {Object} obj - packet object
+     */
+    encode(obj) {
+        debug("encoding packet %j", obj);
+        if (obj.type === PacketType.EVENT || obj.type === PacketType.ACK) {
+            if (is_binary_1.hasBinary(obj)) {
+                obj.type =
+                    obj.type === PacketType.EVENT
+                        ? PacketType.BINARY_EVENT
+                        : PacketType.BINARY_ACK;
+                return this.encodeAsBinary(obj);
+            }
+        }
+        return [this.encodeAsString(obj)];
+    }
+    /**
+     * Encode packet as string.
+     */
+    encodeAsString(obj) {
+        // first is type
+        let str = "" + obj.type;
+        // attachments if we have them
+        if (obj.type === PacketType.BINARY_EVENT ||
+            obj.type === PacketType.BINARY_ACK) {
+            str += obj.attachments + "-";
+        }
+        // if we have a namespace other than `/`
+        // we append it followed by a comma `,`
+        if (obj.nsp && "/" !== obj.nsp) {
+            str += obj.nsp + ",";
+        }
+        // immediately followed by the id
+        if (null != obj.id) {
+            str += obj.id;
+        }
+        // json data
+        if (null != obj.data) {
+            str += JSON.stringify(obj.data);
+        }
+        debug("encoded %j as %s", obj, str);
+        return str;
+    }
+    /**
+     * Encode packet as 'buffer sequence' by removing blobs, and
+     * deconstructing packet into object with placeholders and
+     * a list of buffers.
+     */
+    encodeAsBinary(obj) {
+        const deconstruction = binary_1.deconstructPacket(obj);
+        const pack = this.encodeAsString(deconstruction.packet);
+        const buffers = deconstruction.buffers;
+        buffers.unshift(pack); // add packet info to beginning of data list
+        return buffers; // write all the buffers
+    }
+}
+exports.Encoder = Encoder;
+/**
+ * A socket.io Decoder instance
+ *
+ * @return {Object} decoder
+ */
+class Decoder extends Emitter {
+    constructor() {
+        super();
+    }
+    /**
+     * Decodes an encoded packet string into packet JSON.
+     *
+     * @param {String} obj - encoded packet
+     */
+    add(obj) {
+        let packet;
+        if (typeof obj === "string") {
+            packet = this.decodeString(obj);
+            if (packet.type === PacketType.BINARY_EVENT ||
+                packet.type === PacketType.BINARY_ACK) {
+                // binary packet's json
+                this.reconstructor = new BinaryReconstructor(packet);
+                // no attachments, labeled binary but no binary data to follow
+                if (packet.attachments === 0) {
+                    super.emit("decoded", packet);
+                }
+            }
+            else {
+                // non-binary full packet
+                super.emit("decoded", packet);
+            }
+        }
+        else if (is_binary_1.isBinary(obj) || obj.base64) {
+            // raw binary data
+            if (!this.reconstructor) {
+                throw new Error("got binary data when not reconstructing a packet");
+            }
+            else {
+                packet = this.reconstructor.takeBinaryData(obj);
+                if (packet) {
+                    // received final buffer
+                    this.reconstructor = null;
+                    super.emit("decoded", packet);
+                }
+            }
+        }
+        else {
+            throw new Error("Unknown type: " + obj);
+        }
+    }
+    /**
+     * Decode a packet String (JSON data)
+     *
+     * @param {String} str
+     * @return {Object} packet
+     */
+    decodeString(str) {
+        let i = 0;
+        // look up type
+        const p = {
+            type: Number(str.charAt(0)),
+        };
+        if (PacketType[p.type] === undefined) {
+            throw new Error("unknown packet type " + p.type);
+        }
+        // look up attachments if type binary
+        if (p.type === PacketType.BINARY_EVENT ||
+            p.type === PacketType.BINARY_ACK) {
+            const start = i + 1;
+            while (str.charAt(++i) !== "-" && i != str.length) { }
+            const buf = str.substring(start, i);
+            if (buf != Number(buf) || str.charAt(i) !== "-") {
+                throw new Error("Illegal attachments");
+            }
+            p.attachments = Number(buf);
+        }
+        // look up namespace (if any)
+        if ("/" === str.charAt(i + 1)) {
+            const start = i + 1;
+            while (++i) {
+                const c = str.charAt(i);
+                if ("," === c)
+                    break;
+                if (i === str.length)
+                    break;
+            }
+            p.nsp = str.substring(start, i);
+        }
+        else {
+            p.nsp = "/";
+        }
+        // look up id
+        const next = str.charAt(i + 1);
+        if ("" !== next && Number(next) == next) {
+            const start = i + 1;
+            while (++i) {
+                const c = str.charAt(i);
+                if (null == c || Number(c) != c) {
+                    --i;
+                    break;
+                }
+                if (i === str.length)
+                    break;
+            }
+            p.id = Number(str.substring(start, i + 1));
+        }
+        // look up json data
+        if (str.charAt(++i)) {
+            const payload = tryParse(str.substr(i));
+            if (Decoder.isPayloadValid(p.type, payload)) {
+                p.data = payload;
+            }
+            else {
+                throw new Error("invalid payload");
+            }
+        }
+        debug("decoded %s as %j", str, p);
+        return p;
+    }
+    static isPayloadValid(type, payload) {
+        switch (type) {
+            case PacketType.CONNECT:
+                return typeof payload === "object";
+            case PacketType.DISCONNECT:
+                return payload === undefined;
+            case PacketType.CONNECT_ERROR:
+                return typeof payload === "string" || typeof payload === "object";
+            case PacketType.EVENT:
+            case PacketType.BINARY_EVENT:
+                return Array.isArray(payload) && payload.length > 0;
+            case PacketType.ACK:
+            case PacketType.BINARY_ACK:
+                return Array.isArray(payload);
+        }
+    }
+    /**
+     * Deallocates a parser's resources
+     */
+    destroy() {
+        if (this.reconstructor) {
+            this.reconstructor.finishedReconstruction();
+        }
+    }
+}
+exports.Decoder = Decoder;
+function tryParse(str) {
+    try {
+        return JSON.parse(str);
+    }
+    catch (e) {
+        return false;
+    }
+}
+/**
+ * A manager of a binary event's 'buffer sequence'. Should
+ * be constructed whenever a packet of type BINARY_EVENT is
+ * decoded.
+ *
+ * @param {Object} packet
+ * @return {BinaryReconstructor} initialized reconstructor
+ */
+class BinaryReconstructor {
+    constructor(packet) {
+        this.packet = packet;
+        this.buffers = [];
+        this.reconPack = packet;
+    }
+    /**
+     * Method to be called when binary data received from connection
+     * after a BINARY_EVENT packet.
+     *
+     * @param {Buffer | ArrayBuffer} binData - the raw binary data received
+     * @return {null | Object} returns null if more binary data is expected or
+     *   a reconstructed packet object if all buffers have been received.
+     */
+    takeBinaryData(binData) {
+        this.buffers.push(binData);
+        if (this.buffers.length === this.reconPack.attachments) {
+            // done with buffer list
+            const packet = binary_1.reconstructPacket(this.reconPack, this.buffers);
+            this.finishedReconstruction();
+            return packet;
+        }
+        return null;
+    }
+    /**
+     * Cleans up binary packet reconstruction variables.
+     */
+    finishedReconstruction() {
+        this.reconPack = null;
+        this.buffers = [];
+    }
+}
+
+
+/***/ }),
+
+/***/ "./node_modules/ngx-socket-io/node_modules/socket.io-parser/dist/is-binary.js":
+/*!************************************************************************************!*\
+  !*** ./node_modules/ngx-socket-io/node_modules/socket.io-parser/dist/is-binary.js ***!
+  \************************************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.hasBinary = exports.isBinary = void 0;
+const withNativeArrayBuffer = typeof ArrayBuffer === "function";
+const isView = (obj) => {
+    return typeof ArrayBuffer.isView === "function"
+        ? ArrayBuffer.isView(obj)
+        : obj.buffer instanceof ArrayBuffer;
+};
+const toString = Object.prototype.toString;
+const withNativeBlob = typeof Blob === "function" ||
+    (typeof Blob !== "undefined" &&
+        toString.call(Blob) === "[object BlobConstructor]");
+const withNativeFile = typeof File === "function" ||
+    (typeof File !== "undefined" &&
+        toString.call(File) === "[object FileConstructor]");
+/**
+ * Returns true if obj is a Buffer, an ArrayBuffer, a Blob or a File.
+ *
+ * @private
+ */
+function isBinary(obj) {
+    return ((withNativeArrayBuffer && (obj instanceof ArrayBuffer || isView(obj))) ||
+        (withNativeBlob && obj instanceof Blob) ||
+        (withNativeFile && obj instanceof File));
+}
+exports.isBinary = isBinary;
+function hasBinary(obj, toJSON) {
+    if (!obj || typeof obj !== "object") {
+        return false;
+    }
+    if (Array.isArray(obj)) {
+        for (let i = 0, l = obj.length; i < l; i++) {
+            if (hasBinary(obj[i])) {
+                return true;
+            }
+        }
+        return false;
+    }
+    if (isBinary(obj)) {
+        return true;
+    }
+    if (obj.toJSON &&
+        typeof obj.toJSON === "function" &&
+        arguments.length === 1) {
+        return hasBinary(obj.toJSON(), true);
+    }
+    for (const key in obj) {
+        if (Object.prototype.hasOwnProperty.call(obj, key) && hasBinary(obj[key])) {
+            return true;
+        }
+    }
+    return false;
+}
+exports.hasBinary = hasBinary;
 
 
 /***/ }),

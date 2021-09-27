@@ -1,4 +1,4 @@
-import { switchMap, tap } from 'rxjs/operators';
+import { switchMap, tap, take, distinctUntilChanged } from 'rxjs/operators';
 import { getActiveContact, getActiveContactMsgs, getContacts, getUserRooms } from './../../store/reducers/socket.reducer';
 import { Contact, Message, Room } from 'src/app/interfaces';
 import { LoginAnonymous } from './../../store/actions/user.actions';
@@ -19,7 +19,7 @@ import { getUser } from 'src/app/store/reducers/user.reducer';
     templateUrl: './chat.component.html',
     styleUrls: ['./chat.component.scss'],
 })
-export class ChatComponent implements OnInit, AfterViewChecked, AfterViewInit {
+export class ChatComponent implements OnInit, AfterViewChecked {
     textValidation: boolean = false;
     nameValidation: boolean = false;
     msgs: Msg[] = [];
@@ -50,7 +50,6 @@ export class ChatComponent implements OnInit, AfterViewChecked, AfterViewInit {
 
     ngOnInit(): void {
         this.store.select(getUser)
-
             .subscribe((user) => {
                 if ((user && !this.user) || (user && this.user && this.user._id !== user._id)) {
                     // dispatch action only on user logged in
@@ -62,10 +61,6 @@ export class ChatComponent implements OnInit, AfterViewChecked, AfterViewInit {
         this.store.select(getUserRooms)
             .subscribe((userRooms) => this.userRooms = userRooms);
 
-        // get messages from server
-        // this.store.dispatch(new GetMessages());
-
-        // on changes messages state
         this.store.select(getActiveContactMsgs)
             .subscribe((msgs) => this.msgs = msgs);
 
@@ -73,33 +68,22 @@ export class ChatComponent implements OnInit, AfterViewChecked, AfterViewInit {
             .subscribe((activeContact) => this.activeContact = activeContact);
 
         this.socketService.onSocketEvent('msg')
-            .pipe(tap((msg) => console.log('msg', msg)))
-
             .subscribe((msg) => this.store.dispatch(new GetMessagesSuccess({ msgs: [msg] })));
 
         this.store.select(getContacts)
-            .subscribe((contacts) => {
-                this.contacts = contacts;
-            });
-            
+            .subscribe((contacts) => this.contacts = contacts);
+
         this.socketService.onSocketEvent('activeSockets')
             .subscribe((activeSockets) => {
                 activeSockets = activeSockets.filter((socket: ActiveSocket) => socket.user_id !== this.user._id);
-                this.store.dispatch(new ActiveSockets({activeSockets}));
+                this.store.dispatch(new ActiveSockets({ activeSockets }));
             });
 
         this.socketService.onSocketEvent('joinedRoom')
             .subscribe((room_id) => {
-                console.log('joinedRoom', room_id);
                 this.store.dispatch(new GetUserRooms());
             });
 
-        // this.socketService.onSocketEvent('connected')
-        //     .subscribe((data) => console.log('socket connected', data));
-
-
-        // this.socketService.onSocketEvent('requestForChat')
-        //     .subscribe((data) => this.store.dispatch(new GetMessagesSuccess([{ ...data, direction: 'in' }])));
         this.socketService.onSocketEvent('connect_error')
             .subscribe((data) => console.log('socket connect_error', data));
 
@@ -120,13 +104,6 @@ export class ChatComponent implements OnInit, AfterViewChecked, AfterViewInit {
         this.store.dispatch(new LoginAnonymous(name));
         this.inpName.nativeElement.value = '';
         this.nameValidation = false;
-
-    // this.userService.loginAnonymous(this.inpName.nativeElement.value)
-    //     .subscribe((_) => {
-    // this.socketService.connect();
-    // this.inpName.nativeElement.value = '';
-    // this.nameValidation = false;
-    // });
     }
 
 
@@ -134,7 +111,6 @@ export class ChatComponent implements OnInit, AfterViewChecked, AfterViewInit {
         this.scrollTop();
         if (this.inpName) {
             this.inpNameEvent$ = fromEvent(this.inpName.nativeElement, 'input');
-
             this.inpNameEvent$
                 .subscribe((inputEvent: InputEvent) => {
                     if (!this.inpName.nativeElement.value) {
@@ -146,18 +122,12 @@ export class ChatComponent implements OnInit, AfterViewChecked, AfterViewInit {
         }
     }
 
-    ngAfterViewInit() {
-
-    }
-
-    joinRoom(requestedUser_id: string) {
-        this.socketService.emitSocketEvent('joinRoom', { requestedUser_id });
-    }
-
     startChat(contact: Contact) {
-        this.joinRoom(contact.user_id);
-        console.log('contact', contact);
-        this.store.dispatch(new GetActiveContactMsgs({activeContact: contact}));
+        const callback = (room_id: string) => {
+            contact = { ...contact, room_id };
+            this.store.dispatch(new GetActiveContactMsgs({ activeContact: contact }));
+        };
+        this.socketService.emitSocketEvent('joinRoom', [{requestedUser_id: contact.user_id}, callback]);
     }
 
     logout() {
@@ -173,7 +143,8 @@ export class ChatComponent implements OnInit, AfterViewChecked, AfterViewInit {
             return;
         }
         const text = this.inpMsg.nativeElement.value;
-        this.socketService.emitSocketEvent('msg', {text, room_id: this.activeContact.room_id});
+        console.log('msg send this.activeContact', this.activeContact);
+        this.socketService.emitSocketEvent('msg', { text, room_id: this.activeContact.room_id });
         this.inpMsg.nativeElement.value = '';
         this.textValidation = false;
     }

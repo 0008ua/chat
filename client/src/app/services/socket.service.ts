@@ -17,7 +17,6 @@ export class SocketNsp extends Socket {
     }
 }
 
-
 @Injectable({
     providedIn: 'root',
 })
@@ -25,10 +24,6 @@ export class SocketNsp extends Socket {
 export class SocketService {
     user: User | null;
     msgs: Message[];
-
-    // guestNsp: SocketNsp;
-    // userNsp: SocketNsp;
-    // adminNsp: SocketNsp;
 
     constructor(
         private socket: Socket,
@@ -40,13 +35,6 @@ export class SocketService {
 
         this.store.select(getMsgs)
             .subscribe((msgs) => this.msgs = msgs);
-
-        // create socket namespaces and event listeners for every namespace
-        // for (const nsp of NSP) {
-        //     this[nsp + 'Nsp'] = this.socketNspFactory(nsp);
-        // }
-        // for socket root namespace
-        // this.socket;
     }
 
     isConnected(nsp?: NspType): Socket | SocketNsp {
@@ -91,13 +79,12 @@ export class SocketService {
             map((data: Message) => data));
     }
 
-    emitSocketEvent(socketEvent: MessageType, socketData: Message, nsp?: NspType) {
-        if (nsp) {
-            this.socketNsp(nsp).emit(socketEvent, socketData);
-            return;
-        }
-        this.socket.emit(socketEvent, socketData);
+    emitSocketEvent(socketEvent: MessageType, socketData: Message | [Message, Function]) {
+        // if use emit with callback then pass socketData as array [Message, callback]
+        // otherwise socketData is Message object
+        this.socket.emit(socketEvent, ...Array.isArray(socketData) ? socketData : [socketData]);
     }
+
 
     private socketNsp(nsp: NspType): SocketNsp {
         return this[nsp + 'Nsp'];
@@ -107,27 +94,28 @@ export class SocketService {
         return new SocketNsp({ url: '/' + nsp + 'Nsp', options: {} });
     }
 
-    // getMessages({room_id}): Observable<Message[]> {
-    //     return of([{
-    //         _id: 'sdfsdfsdfsd',
-    //         text: 'test1',
-    //         delivered: true,
-    //     }, {
-    //         _id: 'sdfs2342dfsdfsd',
-    //         text: 'test2',
-    //         delivered: false,
-    //     }]);
-    // }
-
     getUserRooms():Observable<Room[]> {
         const httpOptions = {
             headers: new HttpHeaders({
                 'Content-Type': 'application/json',
             }),
         };
-
         return this.http.get<Room[]>(
             'api/socket/get-user-rooms',
+            httpOptions,
+        ).pipe(tap((getUserRooms) => console.log('getUserRooms', getUserRooms)));
+    }
+
+    getUnreadedMessagesQty(room_id: string): Observable<number> {
+        const httpOptions = {
+            headers: new HttpHeaders({
+                'Content-Type': 'application/json',
+            }),
+            params: new HttpParams()
+                .set('room_id', room_id),
+        };
+        return this.http.get<number>(
+            'api/socket/get-unreaded-messages-qty',
             httpOptions,
         );
     }
@@ -147,29 +135,6 @@ export class SocketService {
         );
     }
 
-    // sendMessage(msg: Message) {
-    //     this.guestNsp.emit('message', msg);
-    // }
-
-    // getMessage() {
-    //     return this.guestNsp.fromEvent('message').pipe(
-    //         map((msg: Message) => msg));
-    // }
-
-    // getMWError() {
-    //     return this.guestNsp.fromEvent('connect_error').pipe(
-    //         map((msg: any) => {
-    //             console.log('msg error', msg);
-    //             return msg;
-    //         }));
-    // }
-
-    // getPatchMessage(): Observable<void> {
-    //     return this.guestNsp.fromEvent('patchMessage').pipe(
-    //         map((patch) => this.store.dispatch(new GetMessagesSuccess(this.patchMessage(patch)))),
-    //     );
-    // }
-
     uuid() {
         return uuidv4();
     }
@@ -177,20 +142,8 @@ export class SocketService {
     composeMessage(text: string): Msg {
         return {
             text,
-            // _id: this.uuid(),
-            // delivered: false,
-            // createdAt: Date.now(),
-            // author_id: this.user._id,
         };
     }
-
-    // patchMessage(patch: Partial<Message>) {
-    //     return this.messages.map((el) => {
-    //         if (patch._id === el._id) {
-    //             return { ...el, ...patch };
-    //         }
-    //     });
-    // }
 }
 
 

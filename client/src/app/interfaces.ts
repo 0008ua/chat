@@ -51,14 +51,16 @@ export interface Msg {
 
 export interface Room {
     _id?: string;
-    // members: string[];
-    members: {
+    // members?: string[];
+    membersInfo: {
         member_id: string;
         readedUntil: any;
+        unreadedMessagesQty?: number;
     }[];
+    unreadedMessages?: number;
     roomType: 'private';
     anotherUser?: User;
-    anotherUser_id?: string;
+    // anotherUser_id?: string;
     anotherUserIsActive?: boolean;
     createdAt?: string;
     updatedAt?: string;
@@ -69,6 +71,7 @@ export interface ActiveSocket {
     userName: string;
     userLogin: string;
     userRole: UserRoleType;
+    unreadedMessagesQty: number;
 }
 
 export interface Contact extends ActiveSocket {
